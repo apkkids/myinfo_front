@@ -1,0 +1,10 @@
+1.import element-ui in main.js, run demand:
+ npm install --save element-ui
+
+2.import axios in ./utils/api.js, then import in main.js, run demand:
+ npm install --save axios
+
+3.create ./store/index.js, import vuex in it, then import it in main.js, run demand:
+npm install --save vuex
+
+
