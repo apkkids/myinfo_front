@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <script>
+    let names = [ 'Will', 'Jack', 'Peter', 'Steve', 'John', 'Hugo', 'Mike' ]
+
+    let newSet = names
+      .map((name, index) => {
+        return {
+          id: index,
+          name: name
+        }
+      })
+      .filter(man => man.id % 2 === 0)
+      .map(man => [man.name])
+      .reduce((a, b) => a.concat(b))
+
+    console.log(newSet)
+
+  </script>
+<script>
+
+</script>
+
+</head>
+<body>
+<p>learn how to use es2015</p>
+
+</body>
+</html>

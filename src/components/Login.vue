@@ -39,14 +39,17 @@ export default {
     submitClick: function () {
       var _this = this
       this.loading = true
-      this.postRequest('/login', {
-        username: this.loginForm.username,
-        password: this.loginForm.password
-      }).then(resp => {
+      this.postRequest('/login',
+        // 这里组合了一个对象传递过去
+        {
+          username: this.loginForm.username,
+          password: this.loginForm.password
+        }
+      ).then(resp => { // 完成后执行后续操作PromiseLike.then
         _this.loading = false
-        if (resp && resp.status === 200) {
+        if (resp && resp.status === 200) { // 如果返回状态是200（成功）
           var data = resp.data
-          _this.$store.commit('login', data.obj)
+          _this.$store.commit('login', data.obj) // 提交login操作mutation
           var path = _this.$route.query.redirect
           _this.$router
             .replace({path: path === '/' || path === undefined ? '/home' : path})
