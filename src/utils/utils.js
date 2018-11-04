@@ -21,7 +21,7 @@ export const initMenu = (router, store) => {
       var fmtRoutes = formatRoutes(resp.data);
       router.addRoutes(fmtRoutes);
       store.commit('initMenu', fmtRoutes);
-      store.dispatch('connect');
+      // store.dispatch('connect');
     }
   })
 }
@@ -46,15 +46,16 @@ export const formatRoutes = (routes) => {
           require(['../components/' + component + '.vue'], resolve)
         } else if (component.startsWith('Emp')) {
           require(['../components/emp/' + component + '.vue'], resolve)
-        } else if (component.startsWith('Per')) {
-          require(['../components/personnel/' + component + '.vue'], resolve)
-        } else if (component.startsWith('Sal')) {
-          require(['../components/salary/' + component + '.vue'], resolve)
-        } else if (component.startsWith('Sta')) {
-          require(['../components/statistics/' + component + '.vue'], resolve)
-        } else if (component.startsWith('Sys')) {
-          require(['../components/system/' + component + '.vue'], resolve)
         }
+        // else if (component.startsWith('Per')) {
+        //   require(['../components/personnel/' + component + '.vue'], resolve)
+        // } else if (component.startsWith('Sal')) {
+        //   require(['../components/salary/' + component + '.vue'], resolve)
+        // } else if (component.startsWith('Sta')) {
+        //   require(['../components/statistics/' + component + '.vue'], resolve)
+        // } else if (component.startsWith('Sys')) {
+        //   require(['../components/system/' + component + '.vue'], resolve)
+        // }
       },
       name: name,
       iconCls: iconCls,

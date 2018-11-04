@@ -67,8 +67,8 @@ export default {
           type: 'warning'
         }).then(() => {
           _this.$message({type: 'success', message: '退出登录'});
-          _this.getRequest('/logout') // 发送了一个get请求到/logout
-          _this.$store.commit('logout') // commit了logout方法
+          _this.getRequest('/logout')
+          _this.$store.commit('logout')
           _this.$router.replace({path: '/'})
         }).catch(() => {
           _this.$message({type: 'info', message: '取消'});
@@ -76,9 +76,18 @@ export default {
       } // end of logout
     }
   },
+  data () {
+    return {
+      // 暂时不用
+      isDot: false
+    }
+  },
   computed: {
     user () {
       return this.$store.state.user
+    },
+    routes () {
+      return this.$store.state.routes
     }
   }
 }
