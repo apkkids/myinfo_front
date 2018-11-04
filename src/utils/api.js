@@ -1,3 +1,5 @@
+// 主要提供为axios封装的函数
+
 import axios from 'axios'
 import {Message} from 'element-ui'
 axios.interceptors.request.use(config => {

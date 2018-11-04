@@ -32,13 +32,13 @@ export default {
         username: 'admin',
         password: '123'
       },
-      loading: false
+      loading: false // 它与表单的v-loading绑定，显示加载时的转圈等待效果
     }
   },
   methods: {
     submitClick: function () {
       var _this = this
-      this.loading = true
+      this.loading = true // 开始转圈等待
       this.postRequest('/login',
         // 这里组合了一个对象传递过去
         {
@@ -46,7 +46,7 @@ export default {
           password: this.loginForm.password
         }
       ).then(resp => { // 完成后执行后续操作PromiseLike.then
-        _this.loading = false
+        _this.loading = false // 加载完成，等待结束
         if (resp && resp.status === 200) { // 如果返回状态是200（成功）
           var data = resp.data
           _this.$store.commit('login', data.obj) // 提交login操作mutation

@@ -7,6 +7,7 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import {getRequest, postRequest, deleteRequest, putRequest} from './utils/api'
+import {initMenu} from './utils/utils'
 import store from './store'
 
 Vue.config.productionTip = false
@@ -16,12 +17,25 @@ Vue.prototype.postRequest = postRequest
 Vue.prototype.deleteRequest = deleteRequest
 Vue.prototype.putRequest = putRequest
 
-// router.beforeEach((to, from, next) => {
-//   // 此处尚未完成
-//   var name = store.state.user.name
-//   console.log(name)
-// }
-// )
+router.beforeEach((to, from, next) => {
+  if (to.name === 'Login') {
+    next()
+    return
+  }
+  var name = store.state.user.name
+  if (name === '未登录') {
+    if (to.meta.requireAuth || to.name == null) {
+      next({path: '/', query: {redirect: to.path}})
+    } else {
+      next()
+    }
+  } else {
+    initMenu(router, store)
+    if (to.path === '/chat') { store.commit('updateMsgList', []) }
+    next()
+  }
+}
+)
 
 new Vue({
   el: '#app',
