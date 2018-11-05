@@ -26,8 +26,9 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside class="home-aside" width="200px">
+        <el-aside class="home-aside" width="180px">
           <div style="display: flex;justify-content: flex-start;width: 180px;text-align: left;">
+            <!--菜单跳转的要素，el-menu中加入router特性，el-menu-item中加入index（值为跳转地址）-->
             <el-menu style="background: #ececec;width: 180px;" unique-opened router>
               <template v-for="(item,index) in this.routes" v-if="!item.hidden">
                 <el-submenu :key="index" :index="index+''">
@@ -46,7 +47,16 @@
             </el-menu>
           </div>
         </el-aside>
-        <el-main class="home-main">Main</el-main>
+        <el-main class="home-main">
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item v-text="this.$router.currentRoute.name"></el-breadcrumb-item>
+          </el-breadcrumb>
+          <keep-alive>
+            <router-view v-if="this.$route.meta.keepAlive"></router-view>
+          </keep-alive>
+          <router-view v-if="!this.$route.meta.keepAlive"></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -58,6 +68,9 @@
 export default {
   name: 'Home',
   methods: {
+    goChat () {
+      this.$message({ type: 'info', message: 'goChat in coding.' });
+    },
     handleCommand (cmd) {
       var _this = this
       if (cmd === 'logout') {

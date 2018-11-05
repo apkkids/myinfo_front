@@ -32,7 +32,7 @@ axios.interceptors.response.use(data => {
       Message.error({message: '未知错误!'})
     }
   }
-  // return Promise.resolve(err);
+  // return Promise.resolve(err)
 })
 let base = ''
 export const postRequest = (url, params) => {

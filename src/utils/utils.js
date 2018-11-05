@@ -43,6 +43,7 @@ export const formatRoutes = (routes) => {
       path: path,
       component (resolve) {
         if (component.startsWith('Home')) {
+          // require就是动态引入组件
           require(['../components/' + component + '.vue'], resolve)
         } else if (component.startsWith('Emp')) {
           require(['../components/emp/' + component + '.vue'], resolve)
