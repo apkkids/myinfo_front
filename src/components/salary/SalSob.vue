@@ -128,10 +128,16 @@
             </div>
             <div v-show="index===7">
               启用时间：
-              <el-date-picker v-model="salary.createDate" type="date" placeholder="选择启用日期" :picker-options="datePickerOptions">
+              <el-date-picker v-model="salary.createDate" type="date" placeholder="选择启用日期"
+                              :picker-options="datePickerOptions"
+                              value-format="yyyy-MM-dd">
               </el-date-picker>
             </div>
           </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; margin: 0px; padding: 0px">
+          <el-button round size="mini" v-if="index!==0" @click="index--">上一步</el-button>
+          <el-button type="primary" round size="mini" @click="next" v-text="index===7?'完成':'下一步'"></el-button>
         </div>
       </el-dialog>
     </div>
@@ -139,119 +145,145 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      // 添加对话框是否显示
-      dialogVisible: false,
-      // table is loading
-      tableLoading: false,
-      index: 0,
-      // save all the salaries objects
-      salaries: [],
-      // save all selected records
-      multipleSelection: [],
-      salary: {
-        id: '',
-        createDate: '',
-        basicSalary: '',
-        trafficSalary: '',
-        lunchSalary: '',
-        bonus: '',
-        pensionBase: '',
-        pensionPer: '',
-        medicalBase: '',
-        medicalPer: '',
-        accumulationFundBase: '',
-        accumulationFundPer: ''
-      },
-      // date-picker空间的快捷选择日期
-      datePickerOptions: {
-        disabledDate (time) {
-          return time.getTime() > Date.now()
+/* eslint-disable semi,indent */
+
+  export default {
+    data () {
+      return {
+        // 添加对话框是否显示
+        dialogVisible: false,
+        // table is loading
+        tableLoading: false,
+        index: 0,
+        // save all the salaries objects
+        salaries: [],
+        // save all selected records
+        multipleSelection: [],
+        salary: {
+          id: '',
+          createDate: '',
+          basicSalary: '',
+          trafficSalary: '',
+          lunchSalary: '',
+          bonus: '',
+          pensionBase: '',
+          pensionPer: '',
+          medicalBase: '',
+          medicalPer: '',
+          accumulationFundBase: '',
+          accumulationFundPer: ''
         },
-        shortcuts: [{
-          text: '今天',
-          onClick (picker) {
-            picker.$emit('pick', new Date())
-          }
-        }, {
-          text: '昨天',
-          onClick (picker) {
-            const date = new Date()
-            date.setTime(date.getTime() - 3600 * 1000 * 24)
-            picker.$emit('pick', date)
-          }
-        }, {
-          text: '一周前',
-          onClick (picker) {
-            const date = new Date()
-            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', date)
-          }
-        }]
-      }
-    }
-  },
-  methods: {
-    loadSalaryCfg () {
-      this.$message({
-        message: 'loadSalaryCfg方法被执行了',
-        type: 'success'
-      })
-      this.tableLoading = true
-      var _this = this
-      // 向后台发送请求/salary/sob/salary，获取数据库Salary数据
-      this.getRequest('/salary/sob/salary').then(resp => {
-        _this.tableLoading = false
-        if (resp && resp.status === 200) {
-          _this.salaries = resp.data
+        // date-picker空间的快捷选择日期
+        datePickerOptions: {
+          disabledDate (time) {
+            return time.getTime() > Date.now()
+          },
+          shortcuts: [{
+            text: '今天',
+            onClick (picker) {
+              picker.$emit('pick', new Date())
+            }
+          }, {
+            text: '昨天',
+            onClick (picker) {
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24)
+              picker.$emit('pick', date)
+            }
+          }, {
+            text: '一周前',
+            onClick (picker) {
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', date)
+            }
+          }]
         }
-      })
+      }
     },
-    handleSelectionChange (val) {
-      this.multipleSelection = val
-      this.$message({
-        message: 'handleSelectionChange方法被执行了' + val.name,
-        type: 'success'
-      })
+    methods: {
+      loadSalaryCfg () {
+        this.$message({
+          message: 'loadSalaryCfg方法被执行了',
+          type: 'success'
+        })
+        this.tableLoading = true
+        var _this = this
+        // 向后台发送请求/salary/sob/salary，获取数据库Salary数据
+        this.getRequest('/salary/sob/salary').then(resp => {
+          _this.tableLoading = false
+          if (resp && resp.status === 200) {
+            _this.salaries = resp.data
+          }
+        })
+      },
+      handleSelectionChange (val) {
+        this.multipleSelection = val
+      },
+      handleEdit (index, row) {
+        this.$message({
+          message: 'handleEdit: index = ' + index + ', row = ' + row,
+          type: 'success'
+        })
+      },
+      handleDelete (index, row) {
+        this.$message({
+          message: 'handleDelete: index = ' + index + ', row = ' + row,
+          type: 'success'
+        })
+      },
+      deleteAll () {
+        this.$message({
+          message: 'deleteAll',
+          type: 'success'
+        })
+      },
+      emptySalary () {
+        this.$message({
+          message: 'emptySalary',
+          type: 'success'
+        })
+      },
+      // update or add a salary
+      next () {
+        var _this = this;
+        // 如果点击了完成按钮
+        if (_this.index === 7) {
+          // 如果数据都填写完毕
+          if (this.salary.createDate && this.salary.basicSalary && this.salary.trafficSalary && this.salary.lunchSalary && this.salary.bonus && this.salary.pensionBase && this.salary.pensionPer &&
+            this.salary.medicalBase && this.salary.medicalPer && this.salary.accumulationFundBase && this.salary.accumulationFundPer) {
+            // update salary
+            if (this.salary.id) {
+
+            } else { // add salary
+              this.$prompt('请输入账套名称', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消'
+                }
+              ).then(({value}) => {
+                // send a post to url: /salary/sob/salary, server will add a salary
+                _this.postRequest('/salary/sob/salary').then(resp => {
+                  // 如果add成功，则关闭对话框，重新设置index，重新加载数据
+                  if (resp && resp.status === 200) {
+                    _this.dialogVisible = false;
+                    _this.index = 0;
+                    _this.loadSalaryCfg();
+                  }
+                });
+              }).catch(() => {
+
+              });
+            }
+          }
+        } else {
+          this.index++
+        }
+      }
     },
-    handleEdit (index, row) {
-      this.$message({
-        message: 'handleEdit: index = ' + index + ', row = ' + row,
-        type: 'success'
-      })
-    },
-    handleDelete (index, row) {
-      this.$message({
-        message: 'handleDelete: index = ' + index + ', row = ' + row,
-        type: 'success'
-      })
-    },
-    deleteAll () {
-      this.$message({
-        message: 'deleteAll',
-        type: 'success'
-      })
-    },
-    emptySalary () {
-      this.$message({
-        message: 'emptySalary',
-        type: 'success'
-      })
-    },
-    next () {
-      this.$message({
-        message: 'next, index = ' + this.index,
-        type: 'success'
-      })
-      this.index++
+    mounted: function () {
+      this.loadSalaryCfg()
     }
-  },
-  mounted: function () {
-    this.loadSalaryCfg()
   }
-}
 </script>
 
 <style scoped>
