@@ -9,7 +9,7 @@
         <div>
           <el-table
             :data="salaries"
-            stripe="true"
+            stripe
             v-loading="tableLoading"
             size="mini"
             @selection-change="handleSelectionChange"
@@ -21,6 +21,7 @@
             <el-table-column width="70" prop="lunchSalary" label="午餐补助"/>
             <el-table-column prop="bonus" width="70" label="奖金"/>
             <el-table-column width="100" label="启用时间">
+              <!--formatDate在/utils/filter_utils.js中，在main.js中引用-->
               <template slot-scope="scope">{{ scope.row.createDate | formatDate}}</template>
             </el-table-column>
             <el-table-column label="养老金" align="center">
@@ -227,17 +228,71 @@
         })
       },
       handleDelete (index, row) {
-        this.$message({
-          message: 'handleDelete: index = ' + index + ', row = ' + row,
-          type: 'success'
-        })
+        this.$confirm('此操作将永久删除该账套, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          var _this = this;
+          var id = row.id;
+          var url = '/salary/sob/salary/' + id;
+          if (id != null) {
+            _this.tableLoading = true;
+            _this.deleteRequest(url).then(resp => {
+              // 如果add成功，则关闭对话框，重新设置index，重新加载数据
+              if (resp && resp.status === 200) {
+                _this.tableLoading = false;
+                _this.loadSalaryCfg();
+                this.$message({
+                  message: '删除账套成功！',
+                  type: 'success'
+                });
+              }
+            });
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       },
+
+      // 批量删除
       deleteAll () {
-        this.$message({
-          message: 'deleteAll',
-          type: 'success'
-        })
+        this.$confirm('此操作将永久删除一批账套, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          var _this = this;
+          var ids = '';
+          this.multipleSelection.forEach(row => {
+            ids = ids + row.id + ',';
+          });
+          var url = '/salary/sob/salary/' + ids;
+          _this.tableLoading = true;
+          _this.deleteRequest(url).then(resp => {
+            var data = resp.data;
+            console.log(data);
+            // 如果add成功，则关闭对话框，重新设置index，重新加载数据
+            if (resp && resp.status === 200) {
+              _this.tableLoading = false;
+              _this.loadSalaryCfg();
+              this.$message({
+                message: '批量删除成功！',
+                type: 'success'
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       },
+
       emptySalary () {
         this.$message({
           message: 'emptySalary',
@@ -262,7 +317,8 @@
                 }
               ).then(({value}) => {
                 // send a post to url: /salary/sob/salary, server will add a salary
-                _this.postRequest('/salary/sob/salary').then(resp => {
+                this.salary.name = value;
+                _this.postRequest('/salary/sob/salary', this.salary).then(resp => {
                   // 如果add成功，则关闭对话框，重新设置index，重新加载数据
                   if (resp && resp.status === 200) {
                     _this.dialogVisible = false;

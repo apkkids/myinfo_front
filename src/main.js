@@ -9,6 +9,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import {getRequest, postRequest, deleteRequest, putRequest} from './utils/api'
 import {initMenu} from './utils/utils'
 import store from './store'
+import './utils/filter_utils'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
