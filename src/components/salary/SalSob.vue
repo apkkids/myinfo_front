@@ -222,10 +222,12 @@
         this.multipleSelection = val
       },
       handleEdit (index, row) {
-        this.$message({
-          message: 'handleEdit: index = ' + index + ', row = ' + row,
-          type: 'success'
-        })
+        // 不删除此属性，则发送put请求会报错
+        delete row.allSalary;
+        // get all the salary parameters in this row
+        this.salary = row;
+        // using the dialog to update salary
+        this.dialogVisible = true;
       },
       handleDelete (index, row) {
         this.$confirm('此操作将永久删除该账套, 是否继续?', '提示', {
@@ -299,7 +301,7 @@
           type: 'success'
         })
       },
-      // update or add a salary
+      // update or add a salary in the database
       next () {
         var _this = this;
         // 如果点击了完成按钮
@@ -309,7 +311,27 @@
             this.salary.medicalBase && this.salary.medicalPer && this.salary.accumulationFundBase && this.salary.accumulationFundPer) {
             // update salary
             if (this.salary.id) {
+              this.$prompt('请输入要修改的账套名称', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                inputValue: this.salary.name
+              }
+              ).then(({value}) => {
+                // send a put to url: /salary/sob/salary, server will update a salary
+                this.salary.name = value;
+                _this.tableLoading = true;
+                this.putRequest('/salary/sob/salary', this.salary).then(resp => {
+                  // 如果update成功，则关闭对话框，重新设置index，重新加载数据
+                  _this.tableLoading = false;
+                  if (resp && resp.status === 200) {
+                    _this.dialogVisible = false;
+                    _this.index = 0;
+                    _this.loadSalaryCfg();
+                  }
+                });
+              }).catch(() => {
 
+              });
             } else { // add salary
               this.$prompt('请输入账套名称', '提示', {
                   confirmButtonText: '确定',
