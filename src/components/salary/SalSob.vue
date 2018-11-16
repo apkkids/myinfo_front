@@ -129,7 +129,7 @@
             </div>
             <div v-show="index===7">
               启用时间：
-              <el-date-picker v-model="salary.createDate" type="date" placeholder="选择启用日期"
+              <el-date-picker v-model="salary.createDate" type="date" placeholder="选择启用日期"  size="mini"  style="width: 200px;"
                               :picker-options="datePickerOptions"
                               value-format="yyyy-MM-dd">
               </el-date-picker>
@@ -222,12 +222,14 @@
         this.multipleSelection = val
       },
       handleEdit (index, row) {
-        // 不删除此属性，则发送put请求会报错
-        delete row.allSalary;
-        // get all the salary parameters in this row
-        this.salary = row;
         // using the dialog to update salary
         this.dialogVisible = true;
+        // 不删除此属性，则发送put请求会报错
+        delete row.allSalary;
+        // 临时转换createDate，date-picker控件可以接受此数据
+        row.createDate = new Date(row.createDate);
+        // get all the salary parameters in this row
+        this.salary = row;
       },
       handleDelete (index, row) {
         this.$confirm('此操作将永久删除该账套, 是否继续?', '提示', {
@@ -296,6 +298,21 @@
       },
 
       emptySalary () {
+        this.salary = {
+          id: '',
+          createDate: '',
+          basicSalary: '',
+          trafficSalary: '',
+          lunchSalary: '',
+          bonus: '',
+          pensionBase: '',
+          pensionPer: '',
+          medicalBase: '',
+          medicalPer: '',
+          accumulationFundBase: '',
+          accumulationFundPer: ''
+        };
+        this.index = 0;
         this.$message({
           message: 'emptySalary',
           type: 'success'
@@ -319,10 +336,11 @@
               ).then(({value}) => {
                 // send a put to url: /salary/sob/salary, server will update a salary
                 this.salary.name = value;
-                _this.tableLoading = true;
-                this.putRequest('/salary/sob/salary', this.salary).then(resp => {
+                // _this.tableLoading = true;
+                console.log(this.salary);
+                _this.putRequest('/salary/sob/salary', this.salary).then(resp => {
                   // 如果update成功，则关闭对话框，重新设置index，重新加载数据
-                  _this.tableLoading = false;
+                  // _this.tableLoading = false;
                   if (resp && resp.status === 200) {
                     _this.dialogVisible = false;
                     _this.index = 0;
@@ -340,6 +358,7 @@
               ).then(({value}) => {
                 // send a post to url: /salary/sob/salary, server will add a salary
                 this.salary.name = value;
+                console.log(this.salary);
                 _this.postRequest('/salary/sob/salary', this.salary).then(resp => {
                   // 如果add成功，则关闭对话框，重新设置index，重新加载数据
                   if (resp && resp.status === 200) {
