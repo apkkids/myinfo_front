@@ -30,7 +30,7 @@ export default {
       checked: true,
       loginForm: {
         username: 'admin',
-        password: '123'
+        password: 'pwd'
       },
       loading: false // 它与表单的v-loading绑定，显示加载时的转圈等待效果
     }
