@@ -328,16 +328,15 @@
             this.salary.medicalBase && this.salary.medicalPer && this.salary.accumulationFundBase && this.salary.accumulationFundPer) {
             // update salary
             if (this.salary.id) {
-              // this.$prompt('请输入要修改的账套名称', '提示', {
-              //   confirmButtonText: '确定',
-              //   cancelButtonText: '取消',
-              //   inputValue: this.salary.name
-              // }
-              // ).then(({value}) => {
-              //   // send a put to url: /salary/sob/salary, server will update a salary
-              //   this.salary.name = value;
-                // _this.tableLoading = true;
-                console.log(this.salary);
+              this.$prompt('请输入要修改的账套名称', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                inputValue: this.salary.name
+              }
+              ).then(({value}) => {
+                // send a put to url: /salary/sob/salary, server will update a salary
+                this.salary.name = value;
+                _this.tableLoading = true;
                 this.putRequest('/salary/sob/salary', this.salary).then(resp => {
                   // 如果update成功，则关闭对话框，重新设置index，重新加载数据
                   // _this.tableLoading = false;
@@ -347,9 +346,8 @@
                     _this.loadSalaryCfg();
                   }
                 });
-              // }).catch(() => {
-              //
-              // });
+              }).catch(() => {
+              });
             } else { // add salary
               this.$prompt('请输入账套名称', '提示', {
                   confirmButtonText: '确定',
@@ -358,7 +356,6 @@
               ).then(({value}) => {
                 // send a post to url: /salary/sob/salary, server will add a salary
                 this.salary.name = value;
-                console.log(this.salary);
                 _this.postRequest('/salary/sob/salary', this.salary).then(resp => {
                   // 如果add成功，则关闭对话框，重新设置index，重新加载数据
                   if (resp && resp.status === 200) {
@@ -368,12 +365,11 @@
                   }
                 });
               }).catch(() => {
-
               });
             }
           }
         } else {
-          this.index++
+          this.index++;
         }
       }
     },
