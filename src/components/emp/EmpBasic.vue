@@ -97,16 +97,35 @@
                     </div>
                   </el-popover>
                 </el-col>
-
+                <el-col :span="10">
+                  入职日期:
+                  <el-date-picker
+                    v-model="beginDateScope"
+                    unlink-panels
+                    type="daterange"
+                    format="yyyy 年 MM 月 dd 日"
+                    value-format="yyyy-MM-dd"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    placeholder="选择日期"
+                    @change="dateChange">
+                  </el-date-picker>
+                </el-col>
+                <el-col :span="5" :offset="4">
+                  <el-button size="mini" type="info" @click="cancelSearch">取消</el-button>
+                  <el-button icon="el-icon-search" type="primary" size="mini" @click="searchEmp">搜索</el-button>
+                </el-col>
               </el-row>
             </div>
           </transition>
+          <!--用来展示员工信息的表格-->
           <el-table
-            :data="tableData"
+            :data="emps"
             style="width: 100%">
             <el-table-column
-              prop="date"
-              label="日期"
+              prop="id"
+              label="id"
               width="180">
             </el-table-column>
             <el-table-column
@@ -115,8 +134,8 @@
               width="180">
             </el-table-column>
             <el-table-column
-              prop="address"
-              label="地址">
+              prop="gender"
+              label="性别">
             </el-table-column>
           </el-table>
         </div>
@@ -138,6 +157,7 @@
         joblevels: [],
         deps: [],
         keywords: '', // 搜索关键字
+        currentPage: 1, // 当前页
         advanceSearchViewVisible: false, // 高级搜索对话框是否显示
         faangledoubleup: 'fa-angle-double-up', // 图标
         faangledoubledown: 'fa-angle-double-down', // 图标
@@ -179,31 +199,18 @@
           children: 'children'
         },
         depTextColor: '#c0c4cc', // 树形控件的颜色
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }]
+        beginDateScope: '', // 入职日期，包括[开始日期，结束日期]
+        // 表格中对应的变量，存储从数据库中读取的员工信息
+        emps: []
       }
     },
     mounted: function () {
       this.$message({message: 'initData()', type: 'success'})
       this.initData()
+      this.loadEmps()
     },
     methods: {
-      initData() {
+      initData() { // 读取字典表
         // load dictionary data
         var _this = this
         this.getRequest('/employee/basic/basicdata').then(resp => {
@@ -214,6 +221,17 @@
             _this.positions = data.positions
             _this.joblevels = data.joblevels
             _this.deps = data.deps
+          }
+        });
+      },
+      loadEmps () { // 读取员工表
+        var _this = this
+        this.getRequest('/employee/basic/emp?page=' + this.currentPage + '&size=10')
+          .then(resp => {
+          if (resp && resp.status === 200) {
+            var data = resp.data;
+            _this.emps = data.emps;
+            console.log('load ' + data.count + ' employees!')
           }
         });
       },
@@ -244,50 +262,27 @@
         this.$message({message: '导出数据', type: 'success'})
       },
       // 点击部门tree控件节点的响应
-      handleNodeClick2 () {
-        this.$message({message: 'handleNodeClick2', type: 'success'})
+      handleNodeClick2 (data) {
+        this.$message({message: '点击了树状控件', type: 'success'})
+        this.emp.departmentName = data.name
+        this.emp.departmentId = data.id
+        this.showOrHidePop2 = false
+        this.depTextColor = '#606266'
       },
+      // 切换树形控件显示
       showDepTree2 () {
-        this.$message({message: 'showDepTree2', type: 'success'})
         this.showOrHidePop2 = !this.showOrHidePop2
+      },
+      // 入职日期被改变
+      dateChange () {
+        this.$message({message: this.beginDateScope, type: 'success'})
+      },
+      cancelSearch () {
+        this.$message({message: 'cancelSearch', type: 'success'})
       }
     }
   }
 </script>
 
 <style scoped>
-  .el-row {
-    margin-bottom: 20px;
-
-  &
-  :last-child {
-    margin-bottom: 0;
-  }
-
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-
-  .bg-purple {
-    background: #d3dce6;
-  }
-
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
-  }
 </style>
