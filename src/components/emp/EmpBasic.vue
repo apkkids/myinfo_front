@@ -181,6 +181,23 @@
         </div>
       </el-main>
     </el-container>
+    <el-form>
+      <div>
+        <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+          <el-form :model="emp" size="mini">
+           <el-row>
+             <el-col :span="5">
+               <el-button>test1</el-button>
+             </el-col>
+           </el-row>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
+    </el-form>
   </div>
 </template>
 
@@ -191,6 +208,7 @@
     data () {
       return {
         dialogFormVisible: false, // 对话框是否展示
+        formLabelWidth: '120px', // 对话框中label宽度
         // 字典表对象
         nations: [],
         politics: [],
