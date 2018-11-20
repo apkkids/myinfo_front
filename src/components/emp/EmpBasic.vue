@@ -174,8 +174,8 @@
             <el-pagination
               @current-change="handleCurrentChange"
               :page-size="10"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="400">
+              layout="total, prev, pager, next, jumper"
+              :total="totalCount">
             </el-pagination>
           </div>
         </div>
@@ -190,6 +190,7 @@
   export default {
     data () {
       return {
+        dialogFormVisible: false, // 对话框是否展示
         // 字典表对象
         nations: [],
         politics: [],
@@ -242,7 +243,8 @@
         depTextColor: '#c0c4cc', // 树形控件的颜色
         beginDateScope: '', // 入职日期，包括[开始日期，结束日期]
         // 表格中对应的变量，存储从数据库中读取的员工信息
-        emps: []
+        emps: [],
+        totalCount: -1 // 查询到的员工数量
       }
     },
     mounted: function () {
@@ -272,6 +274,7 @@
             if (resp && resp.status === 200) {
               var data = resp.data
               _this.emps = data.emps
+              _this.totalCount = data.count;
               console.log('load ' + data.count + ' employees!')
             }
           })
@@ -297,6 +300,7 @@
       // 添加员工
       showAddEmpView () {
         this.$message({message: '添加员工', type: 'success'})
+        this.dialogFormVisible = !this.dialogFormVisible;
       },
       // 导出数据
       exportEmps () {
@@ -330,7 +334,36 @@
         console.log(index, row)
       },
       handleDelete (index, row) {
-        console.log(index, row)
+        var _this = this;
+        var url = '/employee/basic/emp/' + row.id;
+        this.$confirm('此操作将删除员工[' + row.name + '], 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteRequest(url).then(resp => {
+            if (resp && resp.status === 200) {
+              _this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              // 重新载入用户
+              _this.loadEmps();
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+      // 处理分页变化
+      handleCurrentChange (val) {
+        this.$message({message: '当前分页是:' + val, type: 'success'});
+        // 重新查询数据
+        this.currentPage = val;
+        this.loadEmps();
       }
     }
   }
