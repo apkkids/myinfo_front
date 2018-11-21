@@ -184,197 +184,276 @@
     </el-container>
     <el-form :model="emp" size="mini" style="margin: 0px;padding: 0px;">
       <div>
-        <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" :close-on-click-modal="false"
-                   width="80%">
-            <el-row gutter="20">
-              <el-col :span="6">
+        <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" :close-on-click-modal="false" width="75%"
+        style="padding: 0px; margin: 0px">
+          <!--第一行-->
+          <el-row gutter="20">
+            <el-col :span="6">
+              <div>
                 <el-form-item label="姓名:" prop="name">
-                  <el-input prefix-icon="el-icon-edit" placeholder="输入姓名" v-model="emp.name" size="mini" style="width: 150px"/>
+                  <el-input prefix-icon="el-icon-edit" placeholder="输入姓名" v-model="emp.name" size="mini"
+                            style="width: 150px"/>
                 </el-form-item>
-              </el-col>
-              <el-col :span="3">
-                <el-form-item label="性别" prop="gender">
-                  <el-select v-model="emp.gender" placeholder="选择性别">
+              </div>
+            </el-col>
+            <el-col :span="5">
+              <div>
+                <el-form-item label="性别:" prop="gender">
+                  <el-radio-group v-model="emp.gender">
+                    <el-radio label="男">男</el-radio>
+                    <el-radio style="margin-left: 15px" label="女">女</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-form-item label="生日:" prop="birthday">
+                  <el-date-picker v-model="emp.birthday" type="date" placeholder="选择日期"
+                                  style="width: 150px" value-format="yyyy-MM-dd HH:mm:ss"/>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="7">
+              <div>
+                <el-form-item label="政治面貌:" prop="politicId">
+                  <el-select v-model="emp.politicId" placeholder=" 政治面貌" style="width: 200px">
                     <el-option
-                      v-for="item in genderOptions"
+                      v-for="item in politics"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+            </el-col>
+            <!--<el-col :span="7">-->
+            <!--<div>-->
+            <!--<el-form-item label="身份证号" prop="idCard">-->
+            <!--<el-input placeholder="身份证号" v-model="emp.idCard" style="width: 180px"/>-->
+            <!--</el-form-item>-->
+            <!--</div>-->
+            <!--</el-col>-->
+          </el-row>
+          <!--第2行-->
+          <el-row gutter="20">
+            <el-col :span="6">
+              <div>
+                <el-form-item label="民族:" prop="nationId">
+                  <el-select v-model="emp.nationId" placeholder="民族" style="width: 150px">
+                    <el-option
+                      v-for="item in nations"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="5">
+              <div>
+                <el-form-item label=" 籍贯:" prop="nativePlace">
+                  <el-input placeholder="籍贯" v-model="emp.nativePlace" style="width: 150px"/>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-form-item label="邮箱:" prop="email">
+                  <el-input placeholder="邮箱" v-model="emp.email" style="width: 150px"/>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="7">
+              <div>
+                <el-form-item label="联系地址:" prop="address">
+                  <el-input placeholder="联系地址" v-model="emp.address" style="width: 200px"/>
+                </el-form-item>
+              </div>
+            </el-col>
+          </el-row>
+          <!--第三行-->
+          <el-row gutter="20">
+            <el-col :span="6">
+              <div>
+                <el-form-item label="职务:" prop="posId">
+                  <el-select v-model="emp.posId" placeholder="职务" style="width: 150px">
+                    <el-option
+                      v-for="item in positions"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="5">
+              <div>
+                <el-form-item label="职称:" prop="jobLevelId">
+                  <el-select v-model="emp.jobLevelId" placeholder="职称" style="width: 150px">
+                    <el-option
+                      v-for="item in joblevels"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-form-item label="部门:" prop="departmentId">
+                  <el-select v-model="emp.departmentId" placeholder="所属部门" style="width: 150px">
+                    <el-option
+                      v-for="item in deps"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="7">
+              <div>
+                <el-form-item label="联系电话:" prop="phone">
+                  <el-input placeholder="联系电话" v-model="emp.phone" style="width: 200px"/>
+                </el-form-item>
+              </div>
+            </el-col>
+          </el-row>
+          <!--第四行-->
+          <el-row gutter="20">
+            <el-col :span="6">
+              <div>
+                <el-form-item label="工号:" prop="workID">
+                  <el-input placeholder="工号" v-model="emp.workID" style="width: 150px"/>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="5">
+              <div>
+                <el-form-item label="学历:" prop="tiptopDegree">
+                  <el-select v-model="emp.tiptopDegree" placeholder="最高学历" style="width: 150px">
+                    <el-option
+                      v-for="item in degreeOptions"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value">
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </el-col>
-              <el-col :span="5">
-                <el-form-item label="生日" prop="birthday">
-                  <el-date-picker v-model="emp.birthday" type="date" placeholder="选择日期"/>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-form-item label="院校:" prop="school">
+                  <el-input placeholder="毕业院校" v-model="emp.school" style="width: 150px"/>
                 </el-form-item>
-              </el-col>
-              <el-col :span="5">
-                <el-form-item label="身份证号" prop="idCard">
-                  <el-input placeholder="身份证号" v-model="emp.idCard"/>
+              </div>
+            </el-col>
+            <el-col :span="7">
+              <div>
+                <el-form-item label="所属专业:" prop="specialty">
+                  <el-input placeholder="所属专业" v-model="emp.specialty" style="width: 200px"/>
                 </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row gutter="20">
-              <el-col :span="5">
-                婚姻状况：
-                <el-select v-model="emp.wedlock" placeholder="婚姻状况">
-                  <el-option
-                    v-for="item in wedlockOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="5">
-                民族：
-                <el-select v-model="emp.nationId" placeholder="民族">
-                  <el-option
-                    v-for="item in nations"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="5">
-                籍贯：
-                <el-input placeholder="籍贯" v-model="emp.nativePlace"/>
-              </el-col>
-              <el-col :span="5">
-                政治面貌：
-                <el-select v-model="emp.politicId" placeholder=" 政治面貌">
-                  <el-option
-                    v-for="item in politics"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-col>
-            </el-row>
-            <!--第三行-->
-            <el-row gutter="20">
-              <el-col :span="5">
-                邮箱：
-                <el-input placeholder="邮箱" v-model="emp.email"/>
-              </el-col>
-              <el-col :span="5">
-                电话号码：
-                <el-input placeholder="电话号码" v-model="emp.phone"/>
-              </el-col>
-              <el-col :span="5">
-                联系地址：
-                <el-input placeholder="联系地址" v-model="emp.address"/>
-              </el-col>
-              <el-col :span="5">
-                所属部门：
-                <el-select v-model="emp.departmentId" placeholder="所属部门">
-                  <el-option
-                    v-for="item in deps"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-col>
-            </el-row>
-            <!--第四行-->
-            <el-row gutter="20">
-              <el-col :span="5">
-                职称：
-                <el-select v-model="emp.jobLevelId" placeholder="职称">
-                  <el-option
-                    v-for="item in joblevels"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="5">
-                职务：
-                <el-select v-model="emp.posId" placeholder="职务">
-                  <el-option
-                    v-for="item in positions"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="5">
-                聘用形式：
-                <el-radio-group v-model="emp.engageForm">
-                  <el-radio label="劳动合同">劳动合同</el-radio>
-                  <el-radio style="margin-left: 15px" label="劳务合同">劳务合同</el-radio>
-                </el-radio-group>
-              </el-col>
-              <el-col :span="5">
-                最高学历：
-                <el-select v-model="emp.tiptopDegree" placeholder="最高学历">
-                  <el-option
-                    v-for="item in degreeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-col>
-            </el-row>
-            <!--第5行-->
-            <el-row gutter="20">
-              <el-col :span="5">
-                所属专业：
-                <el-input placeholder="所属专业" v-model="emp.specialty"/>
-              </el-col>
-              <el-col :span="5">
-                毕业院校：
-                <el-input placeholder="毕业院校" v-model="emp.school"/>
-              </el-col>
-              <el-col :span="5">
-                入职日期：
-                <el-date-picker v-model="emp.beginDate" type="date" placeholder="入职日期"/>
-              </el-col>
-              <el-col :span="5">
-                在职状态：
-                <el-radio-group v-model="emp.workState">
-                  <el-radio label="在职">在职</el-radio>
-                  <el-radio style="margin-left: 15px" label="离职">离职</el-radio>
-                </el-radio-group>
-              </el-col>
-            </el-row>
-            <!--第6行-->
-            <el-row gutter="20">
-              <el-col :span="5">
-                工号：
-                <el-input placeholder="工号" v-model="emp.workID"/>
-              </el-col>
-              <el-col :span="5">
-                合同期限：
-                <el-input placeholder="合同期限" v-model="emp.contractTerm"/>
-              </el-col>
-              <el-col :span="5">
-                转正日期：
-                <el-date-picker v-model="emp.conversionTime" type="date" placeholder="转正日期"/>
-              </el-col>
-              <el-col :span="5">
-                离职日期：
-                <el-date-picker v-model="emp.notWorkDate" type="date" placeholder="离职日期"/>
-              </el-col>
-            </el-row>
-            <!--第7行-->
-            <el-row gutter="20">
-              <el-col :span="5">
-                合同起始日期：
-                <el-date-picker v-model="emp.beginContract" type="date" placeholder="合同起始日期"/>
-              </el-col>
-              <el-col :span="5">
-                合同终止日期：
-                <el-date-picker v-model="emp.endContract" type="date" placeholder="合同终止日期"/>
-              </el-col>
-            </el-row>
+              </div>
+            </el-col>
+          </el-row>
+          <!--第五行-->
+          <el-row>
+            <el-col :span="6">
+              <div>
+                <el-form-item label="入职日期:" prop="beginDate">
+                  <el-date-picker
+                    v-model="emp.beginDate"
+                    size="mini"
+                    style="width: 130px"
+                    type="date"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    placeholder="入职日期">
+                  </el-date-picker>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-form-item label="转正日期:" prop="conversionTime">
+                  <el-date-picker
+                    v-model="emp.conversionTime"
+                    size="mini"
+                    style="width: 130px"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    type="date"
+                    placeholder="转正日期">
+                  </el-date-picker>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-form-item label="合同起始日期:" prop="beginContract">
+                  <el-date-picker
+                    v-model="emp.beginContract"
+                    size="mini"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    style="width: 135px"
+                    type="date"
+                    placeholder="合同起始日期">
+                  </el-date-picker>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-form-item label="合同终止日期:" prop="endContract">
+                  <el-date-picker
+                    v-model="emp.endContract"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    size="mini"
+                    style="width: 135px"
+                    type="date"
+                    placeholder="合同终止日期">
+                  </el-date-picker>
+                </el-form-item>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <div>
+                <el-form-item label="身份证号码:" prop="idCard">
+                  <el-input prefix-icon="el-icon-edit" v-model="emp.idCard" size="mini" style="width: 180px"
+                            placeholder="请输入员工身份证号码..."></el-input>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div>
+                <el-form-item label="聘用形式:" prop="engageForm">
+                  <el-radio-group v-model="emp.engageForm">
+                    <el-radio label="劳动合同">劳动合同</el-radio>
+                    <el-radio style="margin-left: 15px" label="劳务合同">劳务合同</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div>
+                <el-form-item label="婚姻状况:" prop="wedlock">
+                  <el-radio-group v-model="emp.wedlock">
+                    <el-radio label="已婚">已婚</el-radio>
+                    <el-radio style="margin-left: 15px" label="未婚">未婚</el-radio>
+                    <el-radio style="margin-left: 15px" label="离异">离异</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </div>
+            </el-col>
+          </el-row>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
@@ -389,19 +468,11 @@
 /* eslint-disable semi,indent,space-before-function-paren */
 
   export default {
-    data() {
+    data () {
       return {
         dialogFormVisible: false, // 对话框是否展示
         dialogFormTitle: '添加员工',
         formLabelWidth: '120px', // 对话框中label宽度
-        genderOptions: [
-          {value: '男', label: '男'},
-          {value: '女', label: '女'}
-        ],
-        wedlockOptions: [
-          {value: '未婚', label: '未婚'},
-          {value: '已婚', label: '已婚'},
-          {value: '离异', label: '离异'}],
         degreeOptions: [ // '博士','硕士','本科','大专','高中','初中','小学','其他'
           {value: '博士', label: '博士'},
           {value: '硕士', label: '硕士'},
@@ -474,7 +545,7 @@
       this.loadEmps()
     },
     methods: {
-      initData() { // 读取字典表
+      initData () { // 读取字典表
         // load dictionary data
         var _this = this
         this.getRequest('/employee/basic/basicdata').then(resp => {
@@ -488,47 +559,47 @@
           }
         })
       },
-      loadEmps() { // 读取员工表
+      loadEmps () { // 读取员工表
         var _this = this
         this.getRequest('/employee/basic/emp?page=' + this.currentPage + '&size=10')
           .then(resp => {
             if (resp && resp.status === 200) {
               var data = resp.data
               _this.emps = data.emps
-              _this.totalCount = data.count;
+              _this.totalCount = data.count
               console.log('load ' + data.count + ' employees!')
             }
           })
       },
-      keywordsChange() {
+      keywordsChange () {
         this.$message({message: 'keywordsChange()', type: 'success'})
       },
-      searchEmp() {
+      searchEmp () {
         this.$message({message: 'searchEmp()', type: 'success'})
       },
-      showAdvanceSearchView() {
+      showAdvanceSearchView () {
         this.advanceSearchViewVisible = !this.advanceSearchViewVisible
       },
-      fileUploadSuccess() {
+      fileUploadSuccess () {
         this.$message({message: '文件上传成功', type: 'success'})
       },
-      fileUploadError() {
+      fileUploadError () {
         this.$message.error('文件上传失败')
       },
-      beforeFileUpload() {
+      beforeFileUpload () {
         this.$message({message: '文件上传beforeFileUpload', type: 'success'})
       },
       // 添加员工
-      showAddEmpView() {
+      showAddEmpView () {
         this.$message({message: '添加员工', type: 'success'})
-        this.dialogFormVisible = !this.dialogFormVisible;
+        this.dialogFormVisible = !this.dialogFormVisible
       },
       // 导出数据
-      exportEmps() {
+      exportEmps () {
         this.$message({message: '导出数据', type: 'success'})
       },
       // 点击部门tree控件节点的响应
-      handleNodeClick2(data) {
+      handleNodeClick2 (data) {
         this.$message({message: '点击了树状控件', type: 'success'})
         this.emp.departmentName = data.name
         this.emp.departmentId = data.id
@@ -536,27 +607,27 @@
         this.depTextColor = '#606266'
       },
       // 切换树形控件显示
-      showDepTree2() {
+      showDepTree2 () {
         this.showOrHidePop2 = !this.showOrHidePop2
       },
       // 入职日期被改变
-      dateChange() {
+      dateChange () {
         this.$message({message: this.beginDateScope, type: 'success'})
       },
-      cancelSearch() {
+      cancelSearch () {
         this.$message({message: 'cancelSearch', type: 'success'})
       },
-      handleSelectionChange(val) {
+      handleSelectionChange (val) {
         this.$message({message: 'handleSelectionChange列表选中', type: 'success'})
         this.multipleSelection = val
       },
       // 操作表中的行
-      handleEdit(index, row) {
+      handleEdit (index, row) {
         console.log(index, row)
       },
-      handleDelete(index, row) {
-        var _this = this;
-        var url = '/employee/basic/emp/' + row.id;
+      handleDelete (index, row) {
+        var _this = this
+        var url = '/employee/basic/emp/' + row.id
         this.$confirm('此操作将删除员工[' + row.name + '], 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -567,24 +638,24 @@
               _this.$message({
                 type: 'success',
                 message: '删除成功!'
-              });
+              })
               // 重新载入用户
-              _this.loadEmps();
+              _this.loadEmps()
             }
-          });
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });
-        });
+          })
+        })
       },
       // 处理分页变化
-      handleCurrentChange(val) {
-        this.$message({message: '当前分页是:' + val, type: 'success'});
+      handleCurrentChange (val) {
+        this.$message({message: '当前分页是:' + val, type: 'success'})
         // 重新查询数据
-        this.currentPage = val;
-        this.loadEmps();
+        this.currentPage = val
+        this.loadEmps()
       }
     }
   }
