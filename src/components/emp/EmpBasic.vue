@@ -182,36 +182,40 @@
         </div>
       </el-main>
     </el-container>
-    <el-form>
+    <el-form :model="emp" size="mini" style="margin: 0px;padding: 0px;">
       <div>
-        <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible">
-          <el-form :model="emp" size="mini">
-            <el-row>
-              <el-col :span="5">
-                姓名：
-                <el-input placeholder="输入姓名" v-model="emp.name"/>
+        <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" :close-on-click-modal="false"
+                   width="80%">
+            <el-row gutter="20">
+              <el-col :span="6">
+                <el-form-item label="姓名:" prop="name">
+                  <el-input prefix-icon="el-icon-edit" placeholder="输入姓名" v-model="emp.name" size="mini" style="width: 150px"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="3">
+                <el-form-item label="性别" prop="gender">
+                  <el-select v-model="emp.gender" placeholder="选择性别">
+                    <el-option
+                      v-for="item in genderOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
               </el-col>
               <el-col :span="5">
-                性别：
-                <el-select v-model="emp.gender" placeholder="选择性别">
-                  <el-option
-                    v-for="item in genderOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+                <el-form-item label="生日" prop="birthday">
+                  <el-date-picker v-model="emp.birthday" type="date" placeholder="选择日期"/>
+                </el-form-item>
               </el-col>
               <el-col :span="5">
-                生日：
-                <el-date-picker v-model="emp.birthday" type="date" placeholder="选择日期"/>
-              </el-col>
-              <el-col :span="5">
-                身份证号：
-                <el-input placeholder="身份证号" v-model="emp.idCard"/>
+                <el-form-item label="身份证号" prop="idCard">
+                  <el-input placeholder="身份证号" v-model="emp.idCard"/>
+                </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
+            <el-row gutter="20">
               <el-col :span="5">
                 婚姻状况：
                 <el-select v-model="emp.wedlock" placeholder="婚姻状况">
@@ -251,7 +255,7 @@
               </el-col>
             </el-row>
             <!--第三行-->
-            <el-row>
+            <el-row gutter="20">
               <el-col :span="5">
                 邮箱：
                 <el-input placeholder="邮箱" v-model="emp.email"/>
@@ -277,7 +281,7 @@
               </el-col>
             </el-row>
             <!--第四行-->
-            <el-row>
+            <el-row gutter="20">
               <el-col :span="5">
                 职称：
                 <el-select v-model="emp.jobLevelId" placeholder="职称">
@@ -319,7 +323,58 @@
                 </el-select>
               </el-col>
             </el-row>
-          </el-form>
+            <!--第5行-->
+            <el-row gutter="20">
+              <el-col :span="5">
+                所属专业：
+                <el-input placeholder="所属专业" v-model="emp.specialty"/>
+              </el-col>
+              <el-col :span="5">
+                毕业院校：
+                <el-input placeholder="毕业院校" v-model="emp.school"/>
+              </el-col>
+              <el-col :span="5">
+                入职日期：
+                <el-date-picker v-model="emp.beginDate" type="date" placeholder="入职日期"/>
+              </el-col>
+              <el-col :span="5">
+                在职状态：
+                <el-radio-group v-model="emp.workState">
+                  <el-radio label="在职">在职</el-radio>
+                  <el-radio style="margin-left: 15px" label="离职">离职</el-radio>
+                </el-radio-group>
+              </el-col>
+            </el-row>
+            <!--第6行-->
+            <el-row gutter="20">
+              <el-col :span="5">
+                工号：
+                <el-input placeholder="工号" v-model="emp.workID"/>
+              </el-col>
+              <el-col :span="5">
+                合同期限：
+                <el-input placeholder="合同期限" v-model="emp.contractTerm"/>
+              </el-col>
+              <el-col :span="5">
+                转正日期：
+                <el-date-picker v-model="emp.conversionTime" type="date" placeholder="转正日期"/>
+              </el-col>
+              <el-col :span="5">
+                离职日期：
+                <el-date-picker v-model="emp.notWorkDate" type="date" placeholder="离职日期"/>
+              </el-col>
+            </el-row>
+            <!--第7行-->
+            <el-row gutter="20">
+              <el-col :span="5">
+                合同起始日期：
+                <el-date-picker v-model="emp.beginContract" type="date" placeholder="合同起始日期"/>
+              </el-col>
+              <el-col :span="5">
+                合同终止日期：
+                <el-date-picker v-model="emp.endContract" type="date" placeholder="合同终止日期"/>
+              </el-col>
+            </el-row>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
