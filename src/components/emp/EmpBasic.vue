@@ -184,7 +184,9 @@
     </el-container>
     <el-form :model="emp" size="mini" :rules="rules" ref="addEmpForm" style="margin: 0px;padding: 0px;">
       <div style="text-align: left">
-        <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" :close-on-click-modal="false" width="75%"
+        <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible"
+                   v-loading="dialogLoading"
+                   :close-on-click-modal="false" width="75%"
                    style="padding: 0px; margin: 0px">
           <!--第一行-->
           <el-row :gutter="20">
@@ -248,21 +250,21 @@
             <el-col :span="5">
               <div>
                 <el-form-item label=" 籍贯:" prop="nativePlace">
-                  <el-input placeholder="籍贯" v-model="emp.nativePlace" style="width: 150px"/>
+                  <el-input prefix-icon="el-icon-edit" placeholder="籍贯" v-model="emp.nativePlace" style="width: 150px"/>
                 </el-form-item>
               </div>
             </el-col>
             <el-col :span="6">
               <div>
                 <el-form-item label="邮箱:" prop="email">
-                  <el-input placeholder="邮箱" v-model="emp.email" style="width: 150px"/>
+                  <el-input prefix-icon="el-icon-message" placeholder="邮箱" v-model="emp.email" style="width: 150px"/>
                 </el-form-item>
               </div>
             </el-col>
             <el-col :span="7">
               <div>
                 <el-form-item label="联系地址:" prop="address">
-                  <el-input placeholder="联系地址" v-model="emp.address" style="width: 200px"/>
+                  <el-input prefix-icon="el-icon-location" placeholder="联系地址" v-model="emp.address" style="width: 200px"/>
                 </el-form-item>
               </div>
             </el-col>
@@ -314,7 +316,7 @@
             <el-col :span="7">
               <div>
                 <el-form-item label="联系电话:" prop="phone">
-                  <el-input placeholder="联系电话" v-model="emp.phone" style="width: 200px"/>
+                  <el-input prefix-icon="el-icon-phone" placeholder="联系电话" v-model="emp.phone" style="width: 200px"/>
                 </el-form-item>
               </div>
             </el-col>
@@ -324,7 +326,7 @@
             <el-col :span="6">
               <div>
                 <el-form-item label="工号:" prop="workID">
-                  <el-input placeholder="工号" v-model="emp.workID" style="width: 150px"/>
+                  <el-input prefix-icon="el-icon-edit" placeholder="工号" v-model="emp.workID" style="width: 150px"/>
                 </el-form-item>
               </div>
             </el-col>
@@ -345,14 +347,14 @@
             <el-col :span="6">
               <div>
                 <el-form-item label="院校:" prop="school">
-                  <el-input placeholder="毕业院校" v-model="emp.school" style="width: 150px"/>
+                  <el-input prefix-icon="el-icon-edit" placeholder="毕业院校" v-model="emp.school" style="width: 150px"/>
                 </el-form-item>
               </div>
             </el-col>
             <el-col :span="7">
               <div>
                 <el-form-item label="所属专业:" prop="specialty">
-                  <el-input placeholder="所属专业" v-model="emp.specialty" style="width: 200px"/>
+                  <el-input prefix-icon="el-icon-edit" placeholder="所属专业" v-model="emp.specialty" style="width: 200px"/>
                 </el-form-item>
               </div>
             </el-col>
@@ -463,6 +465,7 @@
   export default {
     data() {
       return {
+        dialogLoading: false, // 对话框loading
         dialogFormVisible: false, // 对话框是否展示
         dialogFormTitle: '添加员工',
         formLabelWidth: '120px', // 对话框中label宽度
@@ -647,7 +650,31 @@
       },
       // 操作表中的行
       handleEdit(index, row) {
-        console.log(index, row)
+        this.emp.name = row.name;
+        this.emp.gender = row.gender
+        this.emp.birthday = this.formatDate(row.birthday)
+        this.emp.politicId = row.politicId
+        this.emp.nationId = row.nation.id
+        this.emp.nativePlace = row.nativePlace
+        this.emp.email = row.email
+        this.emp.address = row.address
+        this.emp.posId = row.position.id
+        this.emp.jobLevelId = row.jobLevel.id
+        this.emp.departmentId = row.department.id
+        this.emp.phone = row.phone
+        this.emp.workID = row.workID
+        this.emp.tiptopDegree = row.tiptopDegree
+        this.emp.school = row.school
+        this.emp.specialty = row.specialty
+        this.emp.beginDate = this.formatDate(row.beginDate)
+        this.emp.conversionTime = this.formatDate(row.conversionTime)
+        this.emp.beginContract = this.formatDate(row.beginContract)
+        this.emp.endContract = this.formatDate(row.endContract)
+        this.emp.idCard = row.idCard
+        this.emp.engageForm = row.engageForm
+        this.emp.wedlock = row.wedlock
+        // 打开对话框
+        console.log(this.emp)
       },
       handleDelete(index, row) {
         var _this = this;
@@ -686,9 +713,17 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             _this.$message({type: 'success', message: '验证成功!'});
-            _this.dialogFormVisible = false;
+            _this.dialogLoading = true;
+            _this.postRequest('/employee/basic/emp', _this.emp).then(resp => {
+              if (resp && resp.status === 200) {
+                _this.$message({type: 'success', message: '添加用户成功!'});
+                _this.dialogLoading = false;
+                _this.dialogFormVisible = false;
+              }
+            }).catch(() => {
+              _this.dialogLoading = false;
+            });
           } else {
-            _this.$message({type: 'success', message: '验证失败!'});
             return false;
           }
         });
