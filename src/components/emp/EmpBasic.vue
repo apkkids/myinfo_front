@@ -182,12 +182,12 @@
         </div>
       </el-main>
     </el-container>
-    <el-form :model="emp" size="mini" style="margin: 0px;padding: 0px;">
-      <div>
+    <el-form :model="emp" size="mini" :rules="rules" ref="addEmpForm" style="margin: 0px;padding: 0px;">
+      <div style="text-align: left">
         <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" :close-on-click-modal="false" width="75%"
-        style="padding: 0px; margin: 0px">
+                   style="padding: 0px; margin: 0px">
           <!--第一行-->
-          <el-row gutter="20">
+          <el-row :gutter="20">
             <el-col :span="6">
               <div>
                 <el-form-item label="姓名:" prop="name">
@@ -228,16 +228,9 @@
                 </el-form-item>
               </div>
             </el-col>
-            <!--<el-col :span="7">-->
-            <!--<div>-->
-            <!--<el-form-item label="身份证号" prop="idCard">-->
-            <!--<el-input placeholder="身份证号" v-model="emp.idCard" style="width: 180px"/>-->
-            <!--</el-form-item>-->
-            <!--</div>-->
-            <!--</el-col>-->
           </el-row>
           <!--第2行-->
-          <el-row gutter="20">
+          <el-row :gutter="20">
             <el-col :span="6">
               <div>
                 <el-form-item label="民族:" prop="nationId">
@@ -275,7 +268,7 @@
             </el-col>
           </el-row>
           <!--第三行-->
-          <el-row gutter="20">
+          <el-row :gutter="20">
             <el-col :span="6">
               <div>
                 <el-form-item label="职务:" prop="posId">
@@ -327,7 +320,7 @@
             </el-col>
           </el-row>
           <!--第四行-->
-          <el-row gutter="20">
+          <el-row :gutter="20">
             <el-col :span="6">
               <div>
                 <el-form-item label="工号:" prop="workID">
@@ -365,7 +358,7 @@
             </el-col>
           </el-row>
           <!--第五行-->
-          <el-row>
+          <el-row :gutter="20">
             <el-col :span="6">
               <div>
                 <el-form-item label="入职日期:" prop="beginDate">
@@ -423,7 +416,7 @@
               </div>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row :gutter="20">
             <el-col :span="8">
               <div>
                 <el-form-item label="身份证号码:" prop="idCard">
@@ -455,8 +448,8 @@
             </el-col>
           </el-row>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button @click="resetForm('addEmpForm')">取 消</el-button>
+            <el-button type="primary" @click="submitForm('addEmpForm')">确 定</el-button>
           </div>
         </el-dialog>
       </div>
@@ -468,7 +461,7 @@
 /* eslint-disable semi,indent,space-before-function-paren */
 
   export default {
-    data () {
+    data() {
       return {
         dialogFormVisible: false, // 对话框是否展示
         dialogFormTitle: '添加员工',
@@ -536,18 +529,49 @@
         beginDateScope: '', // 入职日期，包括[开始日期，结束日期]
         // 表格中对应的变量，存储从数据库中读取的员工信息
         emps: [],
-        totalCount: -1 // 查询到的员工数量
+        totalCount: -1, // 查询到的员工数量
+        // form验证规则
+        rules: {
+          name: [
+            {required: true, message: '请输入员工名称', trigger: 'blur'},
+            {min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur'}
+          ],
+          gender: [{required: true, message: '请选择性别', trigger: 'change'}],
+          birthday: [{required: true, message: '请选择生日', trigger: 'change'}],
+          politicId: [{required: true, message: '请选择政治面貌', trigger: 'change'}],
+          nationId: [{required: true, message: '请选择民族', trigger: 'change'}],
+          nativePlace: [{required: true, message: '请输入员工籍贯', trigger: 'blur'}],
+          email: [{required: true, message: '请输入邮件地址', trigger: 'blur'},
+            {type: 'email', message: '邮箱格式不正确', trigger: 'blur'}], // elementui 提供的邮箱验证pattern
+          address: [{required: true, message: '请输入地址', trigger: 'blur'}],
+          posId: [{required: true, message: '请选择职务', trigger: 'change'}],
+          jobLevelId: [{required: true, message: '请选择职称', trigger: 'change'}],
+          departmentId: [{required: true, message: '请选择部门', trigger: 'change'}],
+          phone: [{required: true, message: '请输入电话', trigger: 'blur'}],
+          workID: [{required: true, message: '请输入工号', trigger: 'blur'}],
+          tiptopDegree: [{required: true, message: '请选择学历', trigger: 'change'}],
+          school: [{required: true, message: '请输入学校', trigger: 'blur'}],
+          specialty: [{required: true, message: '请输入专业', trigger: 'blur'}],
+          beginDate: [{required: true, message: '请选择入职日期', trigger: 'change'}],
+          conversionTime: [{required: true, message: '请选择转正日期', trigger: 'change'}],
+          beginContract: [{required: true, message: '请选择合同起始日期', trigger: 'change'}],
+          endContract: [{required: true, message: '请选择合同终止日期', trigger: 'change'}],
+          idCard: [{required: true, message: '请输入身份证号', trigger: 'blur'},
+            {pattern: /^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{4}$/, message: '身份证号格式不正确'}],
+          engageForm: [{required: true, message: '请选择聘用形式', trigger: 'change'}],
+          wedlock: [{required: true, message: '请选择婚姻状况', trigger: 'change'}]
+        }
       }
     },
     mounted: function () {
-      this.$message({message: 'initData()', type: 'success'})
-      this.initData()
-      this.loadEmps()
+      this.$message({message: 'initData()', type: 'success'});
+      this.initData();
+      this.loadEmps();
     },
     methods: {
-      initData () { // 读取字典表
+      initData() { // 读取字典表
         // load dictionary data
-        var _this = this
+        var _this = this;
         this.getRequest('/employee/basic/basicdata').then(resp => {
           if (resp && resp.status === 200) {
             var data = resp.data
@@ -559,7 +583,7 @@
           }
         })
       },
-      loadEmps () { // 读取员工表
+      loadEmps() { // 读取员工表
         var _this = this
         this.getRequest('/employee/basic/emp?page=' + this.currentPage + '&size=10')
           .then(resp => {
@@ -571,35 +595,35 @@
             }
           })
       },
-      keywordsChange () {
+      keywordsChange() {
         this.$message({message: 'keywordsChange()', type: 'success'})
       },
-      searchEmp () {
+      searchEmp() {
         this.$message({message: 'searchEmp()', type: 'success'})
       },
-      showAdvanceSearchView () {
+      showAdvanceSearchView() {
         this.advanceSearchViewVisible = !this.advanceSearchViewVisible
       },
-      fileUploadSuccess () {
+      fileUploadSuccess() {
         this.$message({message: '文件上传成功', type: 'success'})
       },
-      fileUploadError () {
+      fileUploadError() {
         this.$message.error('文件上传失败')
       },
-      beforeFileUpload () {
+      beforeFileUpload() {
         this.$message({message: '文件上传beforeFileUpload', type: 'success'})
       },
       // 添加员工
-      showAddEmpView () {
+      showAddEmpView() {
         this.$message({message: '添加员工', type: 'success'})
         this.dialogFormVisible = !this.dialogFormVisible
       },
       // 导出数据
-      exportEmps () {
+      exportEmps() {
         this.$message({message: '导出数据', type: 'success'})
       },
       // 点击部门tree控件节点的响应
-      handleNodeClick2 (data) {
+      handleNodeClick2(data) {
         this.$message({message: '点击了树状控件', type: 'success'})
         this.emp.departmentName = data.name
         this.emp.departmentId = data.id
@@ -607,27 +631,27 @@
         this.depTextColor = '#606266'
       },
       // 切换树形控件显示
-      showDepTree2 () {
+      showDepTree2() {
         this.showOrHidePop2 = !this.showOrHidePop2
       },
       // 入职日期被改变
-      dateChange () {
+      dateChange() {
         this.$message({message: this.beginDateScope, type: 'success'})
       },
-      cancelSearch () {
+      cancelSearch() {
         this.$message({message: 'cancelSearch', type: 'success'})
       },
-      handleSelectionChange (val) {
+      handleSelectionChange(val) {
         this.$message({message: 'handleSelectionChange列表选中', type: 'success'})
         this.multipleSelection = val
       },
       // 操作表中的行
-      handleEdit (index, row) {
+      handleEdit(index, row) {
         console.log(index, row)
       },
-      handleDelete (index, row) {
-        var _this = this
-        var url = '/employee/basic/emp/' + row.id
+      handleDelete(index, row) {
+        var _this = this;
+        var url = '/employee/basic/emp/' + row.id;
         this.$confirm('此操作将删除员工[' + row.name + '], 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -638,7 +662,7 @@
               _this.$message({
                 type: 'success',
                 message: '删除成功!'
-              })
+              });
               // 重新载入用户
               _this.loadEmps()
             }
@@ -651,11 +675,27 @@
         })
       },
       // 处理分页变化
-      handleCurrentChange (val) {
-        this.$message({message: '当前分页是:' + val, type: 'success'})
+      handleCurrentChange(val) {
+        this.$message({message: '当前分页是:' + val, type: 'success'});
         // 重新查询数据
-        this.currentPage = val
+        this.currentPage = val;
         this.loadEmps()
+      },
+      submitForm(formName) {
+        var _this = this;
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            _this.$message({type: 'success', message: '验证成功!'});
+            _this.dialogFormVisible = false;
+          } else {
+            _this.$message({type: 'success', message: '验证失败!'});
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+        this.dialogFormVisible = false;
       }
     }
   }
