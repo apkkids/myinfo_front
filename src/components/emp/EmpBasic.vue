@@ -56,19 +56,19 @@
                 </el-col>
                 <el-col :span="4">
                   民族:
-                  <el-select v-model="emp.nations" style="width: 100px" size="mini" placeholder="民族">
+                  <el-select v-model="emp.nationId" style="width: 100px" size="mini" placeholder="民族">
                     <el-option v-for="item in nations" :key="item.id" :label="item.name" :value="item.id"/>
                   </el-select>
                 </el-col>
                 <el-col :span="4">
                   职位:
-                  <el-select v-model="emp.positions" style="width: 100px" size="mini" placeholder="职位">
+                  <el-select v-model="emp.posId" style="width: 100px" size="mini" placeholder="职位">
                     <el-option v-for="item in positions" :key="item.id" :label="item.name" :value="item.id"/>
                   </el-select>
                 </el-col>
                 <el-col :span="4">
                   职称:
-                  <el-select v-model="emp.joblevels" style="width: 100px" size="mini" placeholder="职称">
+                  <el-select v-model="emp.jobLevelId" style="width: 100px" size="mini" placeholder="职称">
                     <el-option v-for="item in joblevels" :key="item.id" :label="item.name" :value="item.id"/>
                   </el-select>
                 </el-col>
@@ -588,8 +588,7 @@
       },
       loadEmps() { // 读取员工表
         var _this = this
-        this.getRequest('/employee/basic/emp?page=' + this.currentPage + '&size=10')
-          .then(resp => {
+        this.getRequest('/employee/basic/emp?page=' + this.currentPage + '&size=10&keywords=' + this.keywords + '&politicId=' + this.emp.politicId + '&nationId=' + this.emp.nationId + '&posId=' + this.emp.posId + '&jobLevelId=' + this.emp.jobLevelId + '&engageForm=' + this.emp.engageForm + '&departmentId=' + this.emp.departmentId + '&beginDateScope=' + this.beginDateScope).then(resp => {
             if (resp && resp.status === 200) {
               var data = resp.data
               _this.emps = data.emps
@@ -602,7 +601,7 @@
         this.$message({message: 'keywordsChange()', type: 'success'})
       },
       searchEmp() {
-        this.$message({message: 'searchEmp()', type: 'success'})
+        this.loadEmps();
       },
       showAdvanceSearchView() {
         this.advanceSearchViewVisible = !this.advanceSearchViewVisible
@@ -653,7 +652,7 @@
         this.emp.name = row.name;
         this.emp.gender = row.gender
         this.emp.birthday = this.formatDate(row.birthday)
-        this.emp.politicId = row.politicId
+        this.emp.politicId = row.politicsStatus.id;
         this.emp.nationId = row.nation.id
         this.emp.nativePlace = row.nativePlace
         this.emp.email = row.email
@@ -673,8 +672,10 @@
         this.emp.idCard = row.idCard
         this.emp.engageForm = row.engageForm
         this.emp.wedlock = row.wedlock
-        // 打开对话框
-        console.log(this.emp)
+        this.emp.workState = row.workState;
+        // 打开对话框,
+        this.emp.id = row.id; // 通过id来确认是增加还是修改员工
+        this.dialogFormVisible = true;
       },
       handleDelete(index, row) {
         var _this = this;
@@ -708,22 +709,39 @@
         this.currentPage = val;
         this.loadEmps()
       },
+      // 对话框确认按钮
       submitForm(formName) {
         var _this = this;
         this.$refs[formName].validate((valid) => {
-          if (valid) {
+          if (valid) { // 如果验证成功
             _this.$message({type: 'success', message: '验证成功!'});
-            _this.dialogLoading = true;
-            _this.postRequest('/employee/basic/emp', _this.emp).then(resp => {
-              if (resp && resp.status === 200) {
-                _this.$message({type: 'success', message: '添加用户成功!'});
+            if (_this.emp.id != null) {
+              // 如果是编辑员工信息
+              _this.dialogLoading = true;
+              _this.putRequest('/employee/basic/emp', _this.emp).then(resp => {
+                if (resp && resp.status === 200) {
+                  _this.$message({type: 'success', message: '编辑员工' + _this.emp.name + ' 信息成功'});
+                  _this.dialogLoading = false;
+                  _this.dialogFormVisible = false;
+                  _this.loadEmps();
+                }
+              }).catch(() => {
                 _this.dialogLoading = false;
-                _this.dialogFormVisible = false;
-              }
-            }).catch(() => {
-              _this.dialogLoading = false;
-            });
-          } else {
+              });
+            } else { // 如果是增加一个员工
+              _this.dialogLoading = true;
+              _this.postRequest('/employee/basic/emp', _this.emp).then(resp => {
+                if (resp && resp.status === 200) {
+                  _this.$message({type: 'success', message: '添加用户成功!'});
+                  _this.dialogLoading = false;
+                  _this.dialogFormVisible = false;
+                  _this.loadEmps();
+                }
+              }).catch(() => {
+                _this.dialogLoading = false;
+              });
+            }
+          } else { // 如果验证失败
             return false;
           }
         });
