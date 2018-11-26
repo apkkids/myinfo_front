@@ -608,21 +608,24 @@
       },
       fileUploadSuccess() {
         this.$message({message: '文件上传成功', type: 'success'})
+        this.fileUploadBtnText = '导入数据';
       },
       fileUploadError() {
-        this.$message.error('文件上传失败')
+        this.$message.error('文件上传失败');
+        this.fileUploadBtnText = '导入数据';
       },
       beforeFileUpload() {
         this.$message({message: '文件上传beforeFileUpload', type: 'success'})
+        this.fileUploadBtnText = '正在导入';
+      },
+      // 导出数据
+      exportEmps() {
+        this.$message({message: '导出数据', type: 'success'})
       },
       // 添加员工
       showAddEmpView() {
         this.$message({message: '添加员工', type: 'success'})
         this.dialogFormVisible = !this.dialogFormVisible
-      },
-      // 导出数据
-      exportEmps() {
-        this.$message({message: '导出数据', type: 'success'})
       },
       // 点击部门tree控件节点的响应
       handleNodeClick2(data) {
@@ -641,7 +644,40 @@
         this.$message({message: this.beginDateScope, type: 'success'})
       },
       cancelSearch() {
-        this.$message({message: 'cancelSearch', type: 'success'})
+        this.emptyEmpData();
+        this.beginDateScope = ''
+      },
+      emptyEmpData () {
+        this.emp = {
+          name: '',
+          gender: '',
+          birthday: '',
+          idCard: '',
+          wedlock: '',
+          nationId: '',
+          nativePlace: '',
+          politicId: '',
+          email: '',
+          phone: '',
+          address: '',
+          departmentId: '',
+          departmentName: '所属部门...',
+          jobLevelId: '',
+          posId: '',
+          engageForm: '',
+          tiptopDegree: '',
+          specialty: '',
+          school: '',
+          beginDate: '',
+          workState: '',
+          workID: '',
+          contractTerm: '',
+          conversionTime: '',
+          notWorkDate: '',
+          beginContract: '',
+          endContract: '',
+          workAge: ''
+        };
       },
       handleSelectionChange(val) {
         this.$message({message: 'handleSelectionChange列表选中', type: 'success'})
