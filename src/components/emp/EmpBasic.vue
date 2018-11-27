@@ -620,7 +620,7 @@
       },
       // 导出数据
       exportEmps() {
-        this.$message({message: '导出数据', type: 'success'})
+        window.open('/employee/basic/exportEmp', '_parent');
       },
       // 添加员工
       showAddEmpView() {
