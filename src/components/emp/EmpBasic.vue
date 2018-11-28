@@ -37,6 +37,7 @@
           <el-button size="mini" type="success" @click="exportEmps">
             <i class="fa fa-lg fa-level-down" style="margin-right: 5px"></i>导出数据
           </el-button>
+          <el-button size="mini" type="primary" @click="testEntity" icon="el-icon-plus">测试</el-button>
           <el-button size="mini" type="primary" @click="showAddEmpView" icon="el-icon-plus">添加员工</el-button>
         </div>
       </el-header>
@@ -572,6 +573,9 @@
       this.loadEmps();
     },
     methods: {
+      testEntity() {
+        window.open('/employee/basic/testEntity', '_parent');
+      },
       initData() { // 读取字典表
         // load dictionary data
         var _this = this;
