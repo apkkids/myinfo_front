@@ -613,6 +613,7 @@
       fileUploadSuccess() {
         this.$message({message: '文件上传成功', type: 'success'})
         this.fileUploadBtnText = '导入数据';
+        this.loadEmps();
       },
       fileUploadError() {
         this.$message.error('文件上传失败');
