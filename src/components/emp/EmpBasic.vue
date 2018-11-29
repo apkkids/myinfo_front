@@ -37,7 +37,6 @@
           <el-button size="mini" type="success" @click="exportEmps">
             <i class="fa fa-lg fa-level-down" style="margin-right: 5px"></i>导出数据
           </el-button>
-          <el-button size="mini" type="primary" @click="testEntity" icon="el-icon-plus">测试</el-button>
           <el-button size="mini" type="primary" @click="showAddEmpView" icon="el-icon-plus">添加员工</el-button>
         </div>
       </el-header>
@@ -172,7 +171,7 @@
             </el-table-column>
           </el-table>
           <div style="display: flex;justify-content: space-between;margin: 2px">
-            <el-button type="danger" size="mini">批量删除</el-button>
+            <el-button type="danger" size="mini" @click="deleteEmps" :disabled="delBtnDisable">批量删除</el-button>
             <el-pagination
               @current-change="handleCurrentChange"
               :page-size="10"
@@ -466,6 +465,7 @@
   export default {
     data() {
       return {
+        delBtnDisable: true, // 批量删除按钮的禁用状态
         dialogLoading: false, // 对话框loading
         dialogFormVisible: false, // 对话框是否展示
         dialogFormTitle: '添加员工',
@@ -568,14 +568,11 @@
       }
     },
     mounted: function () {
-      this.$message({message: 'initData()', type: 'success'});
+      // this.$message({message: 'initData()', type: 'success'});
       this.initData();
       this.loadEmps();
     },
     methods: {
-      testEntity() {
-        window.open('/employee/basic/testEntity', '_parent');
-      },
       initData() { // 读取字典表
         // load dictionary data
         var _this = this;
@@ -597,7 +594,6 @@
               var data = resp.data
               _this.emps = data.emps
               _this.totalCount = data.count
-              console.log('load ' + data.count + ' employees!')
             }
           })
       },
@@ -620,7 +616,6 @@
         this.fileUploadBtnText = '导入数据';
       },
       beforeFileUpload() {
-        this.$message({message: '文件上传beforeFileUpload', type: 'success'})
         this.fileUploadBtnText = '正在导入';
       },
       // 导出数据
@@ -629,12 +624,12 @@
       },
       // 添加员工
       showAddEmpView() {
-        this.$message({message: '添加员工', type: 'success'})
+        // this.$message({message: '添加员工', type: 'success'})
         this.dialogFormVisible = !this.dialogFormVisible
       },
       // 点击部门tree控件节点的响应
       handleNodeClick2(data) {
-        this.$message({message: '点击了树状控件', type: 'success'})
+        // this.$message({message: '点击了树状控件', type: 'success'})
         this.emp.departmentName = data.name
         this.emp.departmentId = data.id
         this.showOrHidePop2 = false
@@ -685,8 +680,9 @@
         };
       },
       handleSelectionChange(val) {
-        this.$message({message: 'handleSelectionChange列表选中', type: 'success'})
+        // this.$message({message: 'handleSelectionChange列表选中', type: 'success'})
         this.multipleSelection = val
+        this.delBtnDisable = (this.multipleSelection.length === 0);
       },
       // 操作表中的行
       handleEdit(index, row) {
@@ -718,6 +714,36 @@
         this.emp.id = row.id; // 通过id来确认是增加还是修改员工
         this.dialogFormVisible = true;
       },
+      // 批量删除
+      deleteEmps () {
+        var _this = this;
+        var ids = '';
+        this.multipleSelection.forEach(row => {
+          ids = ids + row.id + ',';
+        });
+        var url = '/employee/basic/emp/' + ids;
+        this.$confirm('此操作将删除员工, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteRequest(url).then(resp => {
+            if (resp && resp.status === 200) {
+              _this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              // 重新载入用户
+              _this.loadEmps()
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      },
       handleDelete(index, row) {
         var _this = this;
         var url = '/employee/basic/emp/' + row.id;
@@ -745,7 +771,7 @@
       },
       // 处理分页变化
       handleCurrentChange(val) {
-        this.$message({message: '当前分页是:' + val, type: 'success'});
+        // this.$message({message: '当前分页是:' + val, type: 'success'});
         // 重新查询数据
         this.currentPage = val;
         this.loadEmps()
