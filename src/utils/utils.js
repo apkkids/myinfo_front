@@ -49,14 +49,14 @@ export const formatRoutes = (routes) => {
           require(['../components/emp/' + component + '.vue'], resolve)
         } else if (component.startsWith('Sal')) {
           require(['../components/salary/' + component + '.vue'], resolve)
+        } else if (component.startsWith('Sys')) {
+          require(['../components/system/' + component + '.vue'], resolve)
         }
         // else if (component.startsWith('Per')) {
         //   require(['../components/personnel/' + component + '.vue'], resolve)
 
         // else if (component.startsWith('Sta')) {
         //   require(['../components/statistics/' + component + '.vue'], resolve)
-        // } else if (component.startsWith('Sys')) {
-        //   require(['../components/system/' + component + '.vue'], resolve)
         // }
       },
       name: name,
