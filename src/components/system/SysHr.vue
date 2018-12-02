@@ -11,13 +11,19 @@
       <el-button size="small" type="primary" @click="searchHr">搜索</el-button>
     </div>
     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;text-align: left">
-      <el-card style="width:350px; margin-bottom: 10px" v-for="cards in 10" :key="cards">
+      <el-card style="width:350px; margin-bottom: 10px" v-for="(item,index) in sysusers" :key="item.id">
         <div slot="header" >
-          <span>{{'卡片名称' + cards}}</span>
+          <img :src=item.userface style="width: 70px;height: 70px;border-radius: 70px"><br>
+          <div class="user-info"><span>{{'编号' + index}}</span></div>
+          <div class="user-info"><span>{{'管理员:' + item.name}}</span></div>
+          <div class="user-info"><span>{{'地址:' + item.address}}</span></div>
+          <div class="user-info"><span>{{'电话:' + item.telephone}}</span></div>
+          <div><el-switch
+            v-model="item.enabled"
+            active-text="启用"
+            inactive-text="停止">
+          </el-switch></div>
           <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-        </div>
-        <div v-for="o in 4" :key="o" class="text item">
-          {{'列表内容 ' + o }}
         </div>
       </el-card>
     </div>
@@ -31,32 +37,40 @@
     data () {
       return {
         keywords: '',
-        hrs: [] // 存储所有管理员变量的数组
-      }
-    },
-    methods: {
-      searchHr () {
-        this.$message({message: '搜索消息', type: 'success'})
-      },
-      loadSysUsers () {
-        this.$message({message: 'loadSysUsers', type: 'success'})
-        // var _this = this
-        // this.getRequest('/system/hr?keywords=' + this.keywords).then(resp => {
-        //   if (resp && resp.status === 200) {
-        //     var data = resp.data
-        //     _this.emps = data.emps
-        //     _this.totalCount = data.count
-        //   }
-        // })
+        sysusers: [] // 存储所有管理员变量的数组
       }
     },
     mounted: function () {
       // this.$message({message: 'initData()', type: 'success'});
       // this.initData();
       this.loadSysUsers();
+    },
+    methods: {
+      searchHr () {
+        this.$message({message: '搜索消息', type: 'success'})
+      },
+      // 按照关键字keywords载入多个管理员
+      loadSysUsers () {
+        this.$message({message: 'loadSysUsers', type: 'success'})
+        var _this = this
+        var searchWord = this.keywords;
+        if (searchWord === '') { // 如果关键字为空，则赋予all
+          searchWord = 'all';
+        }
+        this.getRequest('/system/sysuser/' + searchWord).then(resp => {
+          if (resp && resp.status === 200) {
+            _this.sysusers = resp.data;
+            console.log(_this.sysusers.length);
+          }
+        });
+      }
     }
   }
 </script>
 
 <style scoped>
+  .user-info {
+    font-size: 12px;
+    color: #09c0f6;
+  }
 </style>
