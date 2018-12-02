@@ -12,18 +12,29 @@
     </div>
     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;text-align: left">
       <el-card style="width:350px; margin-bottom: 10px" v-for="(item,index) in sysusers" :key="item.id">
-        <div slot="header" >
+        <div slot="header">
+          <span>{{item.name}}</span>
+          <el-button style="color: #f6061b;margin: 0px;float: right; padding: 3px 0;width: 15px;height:15px"
+                     icon="el-icon-delete"
+                     @click="deleteSysUser(item.id)"></el-button>
+        </div>
+        <div>
           <img :src=item.userface style="width: 70px;height: 70px;border-radius: 70px"><br>
           <div class="user-info"><span>{{'编号' + index}}</span></div>
           <div class="user-info"><span>{{'管理员:' + item.name}}</span></div>
           <div class="user-info"><span>{{'地址:' + item.address}}</span></div>
           <div class="user-info"><span>{{'电话:' + item.telephone}}</span></div>
-          <div><el-switch
-            v-model="item.enabled"
-            active-text="启用"
-            inactive-text="停止">
-          </el-switch></div>
-          <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+          <div class="user-info"><span>用户状态:</span>
+            <el-switch
+              v-model="item.enabled"
+              active-text="启用"
+              inactive-text="禁用">
+            </el-switch>
+          </div>
+          <div class="user-info">
+            <span>用户角色:</span>
+            <el-tag type="success" size="mini">标签二</el-tag>
+          </div>
         </div>
       </el-card>
     </div>
@@ -43,7 +54,7 @@
     mounted: function () {
       // this.$message({message: 'initData()', type: 'success'});
       // this.initData();
-      this.loadSysUsers();
+      this.loadSysUsers()
     },
     methods: {
       searchHr () {
@@ -53,16 +64,22 @@
       loadSysUsers () {
         this.$message({message: 'loadSysUsers', type: 'success'})
         var _this = this
-        var searchWord = this.keywords;
+        var searchWord = this.keywords
         if (searchWord === '') { // 如果关键字为空，则赋予all
-          searchWord = 'all';
+          searchWord = 'all'
         }
         this.getRequest('/system/sysuser/' + searchWord).then(resp => {
           if (resp && resp.status === 200) {
-            _this.sysusers = resp.data;
-            console.log(_this.sysusers.length);
+            _this.sysusers = resp.data
+            console.log(_this.sysusers.length)
           }
-        });
+        })
+      },
+      deleteSysUser (id) {
+        this.$message({
+          message: '准备删除' + id,
+          type: 'success'
+        })
       }
     }
   }
