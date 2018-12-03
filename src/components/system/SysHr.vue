@@ -33,7 +33,8 @@
           </div>
           <div class="user-info">
             <span>用户角色:</span>
-            <el-tag type="success" size="mini">标签二</el-tag>
+            <el-tag type="success" size="mini" v-for="(role) in item.roles" :key="role.id"
+            style="margin-left: 5px">{{role.nameZh}}</el-tag>
           </div>
         </div>
       </el-card>
@@ -48,15 +49,26 @@
     data () {
       return {
         keywords: '',
+        allRoles: [], // 系统中所有角色
         sysusers: [] // 存储所有管理员变量的数组
       }
     },
     mounted: function () {
       // this.$message({message: 'initData()', type: 'success'});
       // this.initData();
-      this.loadSysUsers()
+      this.loadSysUsers();
+      this.loadAllRoles();
     },
     methods: {
+      loadAllRoles () {
+        var _this = this;
+        this.getRequest('/system/basic/roles').then(resp => {
+          if (resp && resp.status === 200) {
+            _this.allRoles = resp.data;
+            console.log(_this.allRoles);
+          }
+        });
+      },
       searchHr () {
         this.$message({message: '搜索消息', type: 'success'})
       },
@@ -71,7 +83,6 @@
         this.getRequest('/system/sysuser/' + searchWord).then(resp => {
           if (resp && resp.status === 200) {
             _this.sysusers = resp.data
-            console.log(_this.sysusers.length)
           }
         })
       },
