@@ -35,6 +35,23 @@
             <span>用户角色:</span>
             <el-tag type="success" size="mini" v-for="(role) in item.roles" :key="role.id"
             style="margin-left: 5px">{{role.nameZh}}</el-tag>
+            <el-popover
+              placement="right"
+              width="200"
+              title="角色列表"
+              @hide="popoverHide(item.id)"
+              trigger="click">
+              <el-select v-model="selRoles" placeholder="请选择角色" multiple size="mini" multiple-limit="0"
+              @change="selectChange">
+                <el-option
+                  v-for="ar in allRoles"
+                  :key="ar.id"
+                  :label="ar.nameZh"
+                  :value="ar.id">
+                </el-option>
+              </el-select>
+              <el-button slot="reference" icon="el-icon-more" size="mini" @click="loadSelRoles(item.roles)"></el-button>
+            </el-popover>
           </div>
         </div>
       </el-card>
@@ -49,6 +66,9 @@
     data () {
       return {
         keywords: '',
+        selRoles: [], // 当前选中的角色
+        selRolesBak: [], // selRoles的备份
+        rolesChanged: false, // 选中的角色是否改变
         allRoles: [], // 系统中所有角色
         sysusers: [] // 存储所有管理员变量的数组
       }
@@ -60,12 +80,12 @@
       this.loadAllRoles();
     },
     methods: {
+      // 加载系统中所有角色
       loadAllRoles () {
         var _this = this;
         this.getRequest('/system/basic/roles').then(resp => {
           if (resp && resp.status === 200) {
             _this.allRoles = resp.data;
-            console.log(_this.allRoles);
           }
         });
       },
@@ -91,6 +111,56 @@
           message: '准备删除' + id,
           type: 'success'
         })
+      },
+      selectChange () {
+        this.$message({
+          message: '选中的角色为：' + this.selRoles,
+          type: 'success'
+        });
+        this.rolesChanged = true;
+      },
+      // 在弹出控件弹出前，准备好管理员的角色数组selRoles
+      loadSelRoles (sysUserRoles) {
+        this.rolesChanged = false;
+        this.selRoles = [];
+        this.selRolesBak = [];
+        sysUserRoles.forEach(role => {
+          this.selRoles.push(role.id);
+          this.selRolesBak.push(role.id);
+        });
+      },
+      // 弹出控件关闭时调用
+      popoverHide (currentId) {
+        if (this.rolesChanged) {
+          this.$confirm('管理员角色已被改变, 是否保存至数据库?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // 保存到数据库
+            var _this = this;
+            var roles = this.selRoles;
+            this.putRequest('/system/sysuser/roles', {
+              currentId: currentId,
+              rids: roles }).then(resp => {
+                if (resp && resp.status === 200) {
+                  var data = resp.data;
+                  if (data === 'success') {
+                    _this.loadSysUsers();
+                  }
+              }
+            });
+            this.$message({
+              type: 'success',
+              message: '管理员角色改变成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '取消角色改变'
+            });
+          });
+        }
       }
     }
   }
