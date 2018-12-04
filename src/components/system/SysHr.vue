@@ -11,7 +11,8 @@
       <el-button size="small" type="primary" @click="searchHr">搜索</el-button>
     </div>
     <div style="display: flex;justify-content: space-around;flex-wrap: wrap;text-align: left">
-      <el-card style="width:350px; margin-bottom: 10px" v-for="(item,index) in sysusers" :key="item.id">
+      <el-card  style="width:350px; margin-bottom: 10px" v-for="(item,index) in sysusers" :key="item.id"
+      v-loading="cardloading[index]">
         <div slot="header">
           <span>{{item.name}}</span>
           <el-button style="color: #f6061b;margin: 0px;float: right; padding: 3px 0;width: 15px;height:15px"
@@ -39,7 +40,7 @@
               placement="right"
               width="200"
               title="角色列表"
-              @hide="popoverHide(item.id)"
+              @hide="popoverHide(item.id,index)"
               trigger="click">
               <el-select v-model="selRoles" placeholder="请选择角色" multiple size="mini" multiple-limit="0"
               @change="selectChange">
@@ -69,6 +70,7 @@
         selRoles: [], // 当前选中的角色
         selRolesBak: [], // selRoles的备份
         rolesChanged: false, // 选中的角色是否改变
+        cardloading: [], // card是否正在loading
         allRoles: [], // 系统中所有角色
         sysusers: [] // 存储所有管理员变量的数组
       }
@@ -95,14 +97,15 @@
       // 按照关键字keywords载入多个管理员
       loadSysUsers () {
         this.$message({message: 'loadSysUsers', type: 'success'})
-        var _this = this
-        var searchWord = this.keywords
+        var _this = this;
+        var searchWord = this.keywords;
         if (searchWord === '') { // 如果关键字为空，则赋予all
-          searchWord = 'all'
+          searchWord = 'all';
         }
         this.getRequest('/system/sysuser/' + searchWord).then(resp => {
           if (resp && resp.status === 200) {
-            _this.sysusers = resp.data
+            _this.sysusers = resp.data;
+            console.log(resp.data);
           }
         })
       },
@@ -129,8 +132,17 @@
           this.selRolesBak.push(role.id);
         });
       },
+      refreshUser (userid, index) {
+        // this.cardloading.splice(index, 1, true);
+        var _this = this;
+        this.putRequest('/system/sysuser/id', userid).then(resp => {
+          if (resp && resp.status === 200) {
+            _this.sysusers.splice(index, 1, resp.data);
+          }
+        })
+      },
       // 弹出控件关闭时调用
-      popoverHide (currentId) {
+      popoverHide (currentId, index) {
         if (this.rolesChanged) {
           this.$confirm('管理员角色已被改变, 是否保存至数据库?', '提示', {
             confirmButtonText: '确定',
@@ -146,7 +158,7 @@
                 if (resp && resp.status === 200) {
                   var data = resp.data;
                   if (data === 'success') {
-                    _this.loadSysUsers();
+                    _this.refreshUser(currentId, index);
                   }
               }
             });
