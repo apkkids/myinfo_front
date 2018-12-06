@@ -204,20 +204,26 @@
       this.loadSysUsers()
     },
     methods: {
+      // 在添加管理员对话框中点击提交按钮
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!');
-            // this.dialogFormVisible = false;
+            var _this = this;
+            this.putRequest('/system/sysuser/add', this.user).then(resp => {
+              if (resp && resp.status === 200) {
+                _this.$message({message: '添加管理员成功', type: 'success'})
+                _this.dialogFormVisible = false;
+                _this.loadSysUsers();
+              }
+            });
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
       },
       resetForm (formName) {
-        this.$refs[formName].resetFields();
-        // this.dialogFormVisible = false;
+        // this.$refs[formName].resetFields();
+        this.dialogFormVisible = false;
       },
       // 加载系统中所有角色
       loadAllRoles () {
@@ -281,6 +287,7 @@
           this.selRolesBak.push(role.id)
         })
       },
+      // 刷新某个管理员的界面
       refreshUser (userid, index) {
         // this.cardloading.splice(index, 1, true);
         this.cardloading[index] = true
