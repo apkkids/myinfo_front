@@ -147,7 +147,7 @@ export default {
     background-color: #fff;
     color: #000;
     text-align: center;
-    margin: 0px;
-    padding: 0px;;
+    margin: 10px;
+    padding: 10px;;
   }
 </style>
