@@ -126,8 +126,8 @@ export default {
     },
     deleteDep (node, data) {
       if (data.children.length > 0) {
-        this.$alert('此部门包含子部门，不能删除！若要删除请先删除其子部门！', '提示');
-        return;
+        this.$alert('此部门包含子部门，不能删除！若要删除请先删除其子部门！', '提示')
+        return
       }
       this.$confirm('此操作将永久删除[' + data.name + '], 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -137,17 +137,14 @@ export default {
         var _this = this
         this.deleteRequest('/system/basic/dep/' + data.id).then(resp => {
           if (resp && resp.status === 200) {
-            _this.$message({type: 'success', message: '删除成功!'});
-            _this.loading = true;
-            _this.loadTreeData();
+            _this.$message({type: 'success', message: '删除成功!'})
+            _this.loading = true
+            _this.loadTreeData()
           }
         })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      });
+        this.$message({type: 'info', message: '已取消删除，您真的要删除么？'})
+      })
     }
   }
 }
