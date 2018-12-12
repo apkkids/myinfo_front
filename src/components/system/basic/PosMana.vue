@@ -31,7 +31,7 @@
 
 <script>
 /* eslint-disable semi */
-
+import dateUtil from 'element-ui/src/utils/date';
 export default {
   name: 'PosMana',
   data () {
@@ -39,7 +39,13 @@ export default {
       input: '',
       loading: true,
       positions: [], // 存储从数据库中读取的position数组
-      pos: {}
+      ids: '', // 待删除的id字符串
+      pos: {
+        id: '',
+        name: '',
+        enabled: 1,
+        createDate: ''
+      }
     }
   },
   mounted: function () {
@@ -57,9 +63,16 @@ export default {
       _this.loading = false;
     },
     addPosition () {
+      if (this.input === '') {
+        this.$alert('要添加的职位名称不能为空！', '提示');
+        return;
+      }
       var _this = this;
       this.loading = true;
-      this.putRequest('/system/basic/pos/add', this.input).then(resp => {
+      this.pos.name = this.input;
+      // use dateUtil transform the createDate,注意mm和MM
+      this.pos.createDate = dateUtil.format(new Date(), 'yyyy-MM-dd hh:mm:ss');
+      this.putRequest('/system/basic/pos/add', this.pos).then(resp => {
         if (resp && resp.status === 200) {
           _this.loadPosData();
         }
@@ -71,6 +84,23 @@ export default {
     handleEdit (index, row) {
     },
     handleDelete (index, row) {
+      this.$confirm('此操作将永久删除[' + row.name + '], 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.ids = row.id;
+        var _this = this;
+        this.loading = true;
+        this.deleteRequest('/system/basic/pos/' + this.ids).then(resp => {
+          if (resp && resp.status === 200) {
+            _this.loadPosData();
+          }
+        });
+        this.loading = false;
+      }).catch(() => {
+        this.$message({type: 'info', message: '已取消删除'})
+      });
     }
   }
 }
