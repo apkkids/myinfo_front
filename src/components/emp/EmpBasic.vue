@@ -212,7 +212,8 @@
               <div>
                 <el-form-item label="生日:" prop="birthday">
                   <el-date-picker v-model="emp.birthday" type="date" placeholder="选择日期"
-                                  style="width: 150px" value-format="yyyy-MM-dd HH:mm:ss"/>
+                                  style="width: 150px" value-format="yyyy-MM-dd"/>
+                                  <!--style="width: 150px" value-format="yyyy-MM-dd HH:mm:ss"/>-->
                 </el-form-item>
               </div>
             </el-col>
@@ -369,7 +370,7 @@
                     size="mini"
                     style="width: 130px"
                     type="date"
-                    value-format="yyyy-MM-dd HH:mm:ss"
+                    value-format="yyyy-MM-dd"
                     placeholder="入职日期">
                   </el-date-picker>
                 </el-form-item>
@@ -382,7 +383,7 @@
                     v-model="emp.conversionTime"
                     size="mini"
                     style="width: 130px"
-                    value-format="yyyy-MM-dd HH:mm:ss"
+                    value-format="yyyy-MM-dd"
                     type="date"
                     placeholder="转正日期">
                   </el-date-picker>
@@ -395,7 +396,7 @@
                   <el-date-picker
                     v-model="emp.beginContract"
                     size="mini"
-                    value-format="yyyy-MM-dd HH:mm:ss"
+                    value-format="yyyy-MM-dd"
                     style="width: 135px"
                     type="date"
                     placeholder="合同起始日期">
@@ -408,7 +409,7 @@
                 <el-form-item label="合同终止日期:" prop="endContract">
                   <el-date-picker
                     v-model="emp.endContract"
-                    value-format="yyyy-MM-dd HH:mm:ss"
+                    value-format="yyyy-MM-dd"
                     size="mini"
                     style="width: 135px"
                     type="date"
