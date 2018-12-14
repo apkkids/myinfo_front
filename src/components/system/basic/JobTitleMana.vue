@@ -33,9 +33,42 @@
         </el-table>
       </div>
       <div style="display: flex; margin-bottom: 10px ; margin-top: 10px">
-        <el-button type="danger" size="mini" icon="el-icon-delete">批量删除</el-button>
+        <el-button type="danger" size="mini" icon="el-icon-delete" :disabled="this.multipleSelection == ''"
+        @click="deleteMore">批量删除</el-button>
       </div>
-      <div>看不见的对话框</div>
+      <div style="text-align: left">
+        <el-dialog title="编辑职称" :visible.sync="dialogFormVisible">
+          <el-form>
+            <el-form-item label="职称名称" label-width="120px">
+              <el-input v-model="job.name" autocomplete="off" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="职称等级" label-width="120px">
+              <el-select v-model="job.titleLevel" placeholder="请选择职称级别" style="width:200px;margin-right: 10px" size="mini">
+                <el-option
+                  v-for="item in titleOptions"
+                  :key="item.value"
+                  :label="item.value"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="创建时间" label-width="120px">
+              <el-date-picker v-model="job.createDate" type="date" placeholder="选择创建时间"
+                              style="width: 150px" value-format="yyyy-MM-dd" size="mini"/>
+            </el-form-item>
+            <el-form-item label="是否有效" label-width="120px">
+              <el-radio-group v-model="job.enabled" size="mini">
+                <el-radio :label=true>有效</el-radio>
+                <el-radio :label=false>无效</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dlgCancel">取 消</el-button>
+            <el-button type="primary" @click="dlgSumbmit">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
     </div>
 </template>
 
@@ -46,6 +79,7 @@ export default {
   name: 'JobTitleMana',
   data () {
     return {
+      dialogFormVisible: false,
       titleOptions: [{
         value: '正高级'
       }, {
@@ -65,7 +99,8 @@ export default {
         createDate: '',
         enabled: 1
       },
-      loading: false
+      loading: false,
+      multipleSelection: []
     }
   },
   mounted: function () {
@@ -101,8 +136,14 @@ export default {
       });
       this.loading = false;
     },
-    handleSelectionChange () {},
-    handleEdit (index, row) {},
+    handleSelectionChange (val) {
+      this.multipleSelection = val;
+    },
+    handleEdit (index, row) {
+      this.dialogFormVisible = true;
+      this.job = row;
+      this.job.createDate = this.formatDate(row.createDate)
+    },
     handleDelete (index, row) {
       this.loading = true;
       var _this = this;
@@ -113,7 +154,44 @@ export default {
       });
       this.loading = false;
     },
-    deleteMore () {}
+    deleteMore () {
+      this.loading = true;
+      var ids = '';
+      for (var i = 0; i < this.multipleSelection.length; i++) {
+        ids += this.multipleSelection[i].id + ',';
+      }
+      var _this = this;
+      this.deleteRequest('/system/basic/jobLevel/' + ids).then(resp => {
+        if (resp && resp.status === 200) {
+          _this.loadData();
+        }
+      })
+      this.loading = false;
+    },
+    resetJobLevel () {
+      this.job = { // 当前的jobLevel
+        id: '',
+        name: '',
+        titleLevel: '',
+        createDate: '',
+        enabled: 1
+      };
+    },
+    dlgCancel () {
+      this.dialogFormVisible = false;
+      this.resetJobLevel();
+    },
+    dlgSumbmit () {
+      this.dialogFormVisible = false;
+      var _this = this;
+      this.job.createDate += ' 00:00:00';
+      this.putRequest('/system/basic/jobLevel', this.job).then(resp => {
+        if (resp && resp.status === 200) {
+          _this.loadData();
+        }
+      })
+      this.resetJobLevel();
+    }
   }
 }
 </script>
