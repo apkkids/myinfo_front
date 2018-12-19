@@ -12,10 +12,11 @@
         <el-collapse-item v-for="(item,index) in roles" :title=item.nameZh :name=item.id :key=item.id>
           <el-card class="box-card">
             <div slot="header" style="display:flex;justify-content:space-between;width:500px;">
-              <span>{{'可访问的资源'+ index}}</span>
+              <span>可访问的资源</span>
               <!--<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
               <el-button size="mini" plain type="text" icon="el-icon-delete"
-                         style="color: #f6061b;margin: 0px;float: right; padding: 3px 0;width: 15px;height:15px"></el-button>
+                         style="color: #f6061b;margin: 0px;float: right; padding: 3px 0;width: 15px;height:15px"
+                         @click="deleteRole(item.id)"></el-button>
             </div>
             <el-tree
               :props="defaultProps"
@@ -30,7 +31,7 @@
             </el-tree>
             <div style="display:flex;justify-content:flex-end;width:500px;margin-top: 10px">
               <el-button size="mini">取消修改</el-button>
-              <el-button size="mini" type="primary">确认修改</el-button>
+              <el-button size="mini" type="primary" @click="comfirmChange(index)">确认修改</el-button>
             </div>
           </el-card>
         </el-collapse-item>
@@ -62,6 +63,40 @@ export default {
   },
   methods: {
     addRole () {
+      if (this.rolename === '') {
+        this.$alert('角色英文名称必须填写', '注意', {confirmButtonText: '确定'});
+      }
+      if (this.roleZhname === '') {
+        this.$alert('角色中文名称必须填写', '注意', {confirmButtonText: '确定'});
+      }
+      var role = {name: '', nameZh: ''};
+      role.name = 'ROLE_' + this.rolename;
+      role.nameZh = this.roleZhname;
+      var _this = this;
+      this.postRequest('/system/basic/role', role).then(resp => {
+        if (resp && resp.status === 200) {
+          _this.loadData();
+          this.$message({type: 'success', message: '角色添加成功!'});
+        }
+      });
+    },
+
+    deleteRole (id) {
+      this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var _this = this;
+        this.deleteRequest('/system/basic/role/' + id).then(resp => {
+          if (resp && resp.status === 200) {
+            _this.loadData();
+            this.$message({type: 'success', message: '角色删除成功!'});
+          }
+        });
+      }).catch(() => {
+        this.$message({type: 'info', message: '已取消删除'});
+      });
     },
     loadData () {
       this.loading = true;
@@ -74,10 +109,10 @@ export default {
       })
     },
     // 树的选择改变
-    handleCheckChange () {},
+    handleCheckChange () {
+    },
     // collapse控件展开状态改变
     collapseChange (activeNames) {
-      console.log(activeNames);
       if (activeNames === '') { // 如果没有展开某个Collapse，则不用读取数据
         return
       }
@@ -87,11 +122,13 @@ export default {
         if (resp && resp.status === 200) {
           var data = resp.data;
           _this.treeData = data.menus;
-          console.log(data.menus);
           _this.checkedKeys = data.mids;
-          console.log(data.mids);
         }
       })
+    },
+    comfirmChange (index) {
+      // var checkedKeys = this.$refs.tree[index].getCheckedKeys(true);
+      // var rid =  this.activeColItem;
     }
   },
   computed: {
