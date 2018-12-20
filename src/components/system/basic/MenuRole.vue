@@ -30,7 +30,7 @@
               @check-change="handleCheckChange">
             </el-tree>
             <div style="display:flex;justify-content:flex-end;width:500px;margin-top: 10px">
-              <el-button size="mini">取消修改</el-button>
+              <el-button size="mini" @click="cancelChange">取消修改</el-button>
               <el-button size="mini" type="primary" @click="comfirmChange(index)">确认修改</el-button>
             </div>
           </el-card>
@@ -58,27 +58,27 @@ export default {
     }
   },
   mounted: function () {
-    this.loading = true;
+    this.loading = true
     this.loadData()
   },
   methods: {
     addRole () {
       if (this.rolename === '') {
-        this.$alert('角色英文名称必须填写', '注意', {confirmButtonText: '确定'});
+        this.$alert('角色英文名称必须填写', '注意', {confirmButtonText: '确定'})
       }
       if (this.roleZhname === '') {
-        this.$alert('角色中文名称必须填写', '注意', {confirmButtonText: '确定'});
+        this.$alert('角色中文名称必须填写', '注意', {confirmButtonText: '确定'})
       }
-      var role = {name: '', nameZh: ''};
-      role.name = 'ROLE_' + this.rolename;
-      role.nameZh = this.roleZhname;
-      var _this = this;
+      var role = {name: '', nameZh: ''}
+      role.name = 'ROLE_' + this.rolename
+      role.nameZh = this.roleZhname
+      var _this = this
       this.postRequest('/system/basic/role', role).then(resp => {
         if (resp && resp.status === 200) {
-          _this.loadData();
-          this.$message({type: 'success', message: '角色添加成功!'});
+          _this.loadData()
+          this.$message({type: 'success', message: '角色添加成功!'})
         }
-      });
+      })
     },
 
     deleteRole (id) {
@@ -87,24 +87,24 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        var _this = this;
+        var _this = this
         this.deleteRequest('/system/basic/role/' + id).then(resp => {
           if (resp && resp.status === 200) {
-            _this.loadData();
-            this.$message({type: 'success', message: '角色删除成功!'});
+            _this.loadData()
+            this.$message({type: 'success', message: '角色删除成功!'})
           }
-        });
+        })
       }).catch(() => {
-        this.$message({type: 'info', message: '已取消删除'});
-      });
+        this.$message({type: 'info', message: '已取消删除'})
+      })
     },
     loadData () {
-      this.loading = true;
+      this.loading = true
       var _this = this
       this.getRequest('/system/basic/roles').then(resp => {
         if (resp && resp.status === 200) {
           _this.roles = resp.data
-          this.loading = false;
+          this.loading = false
         }
       })
     },
@@ -120,24 +120,24 @@ export default {
       var _this = this
       this.getRequest('/system/basic/menuTree/' + activeNames).then(resp => {
         if (resp && resp.status === 200) {
-          var data = resp.data;
-          _this.treeData = data.menus;
-          _this.checkedKeys = data.mids;
+          var data = resp.data
+          _this.treeData = data.menus
+          _this.checkedKeys = data.mids
         }
       })
     },
     comfirmChange (index) {
-      // var checkedKeys = this.$refs.tree[index].getCheckedKeys(true);
-      // var rid =  this.activeColItem;
-    }
-  },
-  computed: {
-    user () {
-      return this.$store.state.user
+      var checkedKeys = this.$refs.tree[index].getCheckedKeys(true)
+      var rid = this.activeColItem
+      var _this = this
+      this.putRequest('/system/basic/updateMenuRole', {rid: rid, mids: checkedKeys}).then(resp => {
+        if (resp && resp.status === 200) {
+          _this.activeColItem = -1;
+        }
+      });
     },
-    // 存储的菜单
-    routes () {
-      return this.$store.state.routes
+    cancelChange () {
+      this.activeColItem = -1;
     }
   }
 }
